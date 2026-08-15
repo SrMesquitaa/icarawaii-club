@@ -577,6 +577,8 @@
 
     <div class="cat-nav" id="catNav"></div>
 
+    <p class="small" id="searchNoResults" style="color:var(--mute);display:none;padding:20px 0">Nenhum produto encontrado.</p>
+
     <div id="catalogRoot">
       <p class="small" style="color:var(--mute)">Carregando catálogo…</p>
     </div>
@@ -849,18 +851,26 @@
   }
 
   // ---------- Busca ----------
+  function stripAccents(str){
+    return str.normalize('NFD').replace(/[̀-ͯ]/g, '');
+  }
+
   function applySearchFilter(){
     const input = document.getElementById('searchInput');
-    const q = input ? input.value.trim().toLowerCase() : '';
+    const q = input ? stripAccents(input.value.trim().toLowerCase()) : '';
+    let totalVisible = 0;
     document.querySelectorAll('.cat-group').forEach(group => {
       let visible = 0;
       group.querySelectorAll('.prod-card').forEach(card => {
-        const match = !q || card.dataset.name.toLowerCase().includes(q);
+        const match = !q || stripAccents(card.dataset.name.toLowerCase()).includes(q);
         card.style.display = match ? '' : 'none';
         if(match) visible++;
       });
       group.style.display = visible ? '' : 'none';
+      totalVisible += visible;
     });
+    const noResults = document.getElementById('searchNoResults');
+    if(noResults) noResults.style.display = (q && totalVisible === 0) ? '' : 'none';
   }
 
   document.getElementById('searchInput').addEventListener('input', applySearchFilter);
