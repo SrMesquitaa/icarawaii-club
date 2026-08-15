@@ -839,6 +839,12 @@
       });
     });
 
+    function centerChip(chip){
+      // Rola só a barra de chips (scrollLeft dela mesma), nunca a página.
+      const target = chip.offsetLeft - (catNav.clientWidth - chip.clientWidth) / 2;
+      catNav.scrollTo({left: Math.max(0, target), behavior:'smooth'});
+    }
+
     const spy = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if(!e.isIntersecting) return;
@@ -846,7 +852,7 @@
         if(!chip) return;
         catNav.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
         chip.classList.add('active');
-        chip.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+        centerChip(chip);
       });
     }, {rootMargin:'-40% 0px -50% 0px', threshold:0});
     groups.forEach(g => spy.observe(g));
