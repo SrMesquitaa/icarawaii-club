@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ICARAWAII CLUB — Fortaleza</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,500;1,700;1,900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0a;
+    --ink:#f2efe8;
+    --silver:#d4d4d4;
+    --mute:#7a7a7a;
+    --red:#e63030;
+    --blue:#4a9fd4;
+    --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.45 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.5'/></svg>");
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);font-family:"Barlow Condensed", sans-serif;font-weight:400;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  body{position:relative}
+  body::before{content:"";position:fixed;inset:0;background-image:var(--grain);opacity:.08;pointer-events:none;z-index:1000;mix-blend-mode:overlay}
+  a{color:inherit;text-decoration:none}
+  img{display:block;max-width:100%}
+  ::selection{background:var(--red);color:#fff}
+
+  /* ---------- Typography utilities ---------- */
+  .display{font-family:"Bebas Neue", sans-serif;letter-spacing:.005em;line-height:.86}
+  .mono-tag{font-family:"Barlow Condensed",sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.28em;font-size:12px;color:var(--silver)}
+  .small{font-family:"Barlow Condensed",sans-serif;font-weight:500;text-transform:uppercase;letter-spacing:.22em;font-size:11px}
+  .italic-shout{font-family:"Barlow Condensed",sans-serif;font-style:italic;font-weight:900;text-transform:uppercase;letter-spacing:.02em}
+
+  /* ---------- Navbar ---------- */
+  .nav{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 22px;
+    background:linear-gradient(to bottom, rgba(10,10,10,.92), rgba(10,10,10,.55) 70%, rgba(10,10,10,0));
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+  }
+  .nav-logo{display:flex;align-items:center;gap:12px}
+  .nav-logo img{height:46px;width:46px;border-radius:50%;object-fit:cover;border:1px solid rgba(255,255,255,.08)}
+  .nav-logo .wm{display:flex;flex-direction:column;line-height:1}
+  .nav-logo .wm b{font-family:"Bebas Neue",sans-serif;font-size:20px;letter-spacing:.04em}
+  .nav-logo .wm span{font-family:"Barlow Condensed",sans-serif;font-size:10px;letter-spacing:.32em;color:var(--mute);text-transform:uppercase;margin-top:2px}
+  .nav-links{display:flex;gap:28px;align-items:center}
+  .nav-links a{font-family:"Barlow Condensed",sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.18em;font-size:13px;color:var(--silver);position:relative;padding:6px 0}
+  .nav-links a:hover{color:#fff}
+  .nav-links a::after{content:"";position:absolute;left:0;right:100%;bottom:0;height:2px;background:var(--red);transition:right .25s ease}
+  .nav-links a:hover::after{right:0}
+  .wa-btn{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--red);color:#fff;
+    padding:11px 18px 11px 14px;border:0;cursor:pointer;
+    font-family:"Bebas Neue",sans-serif;letter-spacing:.08em;font-size:17px;
+    clip-path: polygon(8% 0,100% 0,92% 100%,0 100%);
+    position:relative;
+    transition:transform .15s ease, background .15s ease;
+  }
+  .wa-btn:hover{background:#ff3a3a;transform:translateY(-1px)}
+  .wa-btn svg{width:18px;height:18px;fill:#fff}
+  @media (max-width: 800px){
+    .nav-links{display:none}
+    .nav{padding:10px 14px}
+    .nav-logo img{height:40px;width:40px}
+  }
+
+  /* ---------- Ghost word ---------- */
+  .ghost-word{
+    position:absolute;inset:auto 0 auto 0;
+    font-family:"Bebas Neue",sans-serif;
+    font-size:clamp(180px, 32vw, 520px);
+    line-height:.78;
+    color:transparent;
+    -webkit-text-stroke:1.5px rgba(212,212,212,.10);
+    text-stroke:1.5px rgba(212,212,212,.10);
+    letter-spacing:-.01em;
+    text-align:center;
+    user-select:none;pointer-events:none;
+    white-space:nowrap;
+    z-index:0;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;min-height:100vh;min-height:100svh;
+    padding:130px 22px 60px;
+    display:flex;align-items:center;
+    overflow:hidden;
+    isolation:isolate;
+  }
+  .hero .ghost-word{top:18vh;left:50%;transform:translateX(-50%)}
+  .hero-grid{
+    position:relative;z-index:2;
+    width:100%;max-width:1400px;margin:0 auto;
+    display:grid;grid-template-columns: 1fr;
+    gap:30px;align-items:end;
+  }
+  @media(min-width:980px){
+    .hero-grid{grid-template-columns: 1.4fr .9fr;align-items:end;gap:40px}
+  }
+
+  .hero-meta{display:flex;gap:14px;align-items:center;margin-bottom:52px;flex-wrap:wrap}
+  .hero-meta .dot{width:9px;height:9px;border-radius:50%;background:var(--red);box-shadow:0 0 0 4px rgba(230,48,48,.18);animation:pulse 1.8s infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(230,48,48,.18)}50%{box-shadow:0 0 0 9px rgba(230,48,48,0)}}
+
+  .hero h1{
+    font-family:"Bebas Neue",sans-serif;
+    font-size:clamp(78px, 14.5vw, 240px);
+    line-height:.82;letter-spacing:-.005em;
+    color:#f6f4ee;
+    text-transform:uppercase;
+  }
+  .hero h1 .stroke{
+    color:transparent;
+    -webkit-text-stroke:2px var(--silver);
+    text-stroke:2px var(--silver);
+  }
+  .hero h1 .red{color:var(--red);font-style:italic;display:inline-block;transform:translateY(-.04em)}
+  .hero h1 .blue-bg{
+    position:relative;display:inline-block;color:#0a0a0a;
+    padding:0 .12em;
+  }
+  .hero h1 .blue-bg::before{
+    content:"";position:absolute;inset:8% -2% 12% -2%;
+    background:var(--blue);
+    z-index:-1;
+    transform:skew(-6deg);
+  }
+
+  .tagline{
+    margin-top:34px;
+    max-width:560px;
+    font-family:"Barlow Condensed",sans-serif;
+    font-weight:500;
+    font-size:clamp(18px,2.1vw,22px);
+    line-height:1.32;
+    color:#cfcdc6;
+  }
+  .tagline b{color:#fff;font-weight:700}
+
+  .hero-ctas{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:12px;
+    padding:18px 26px;
+    font-family:"Bebas Neue",sans-serif;letter-spacing:.06em;font-size:22px;
+    border:0;cursor:pointer;
+    transition:transform .15s ease;
+    position:relative;
+  }
+  .btn:hover{transform:translateY(-2px)}
+  .btn .arrow{font-size:20px;transition:transform .2s ease}
+  .btn:hover .arrow{transform:translateX(4px)}
+  .btn-primary{background:var(--red);color:#fff;clip-path:polygon(6% 0,100% 0,94% 100%,0 100%);padding:18px 32px}
+  .btn-ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.22)}
+  .btn-ghost:hover{border-color:var(--blue);color:var(--blue)}
+
+  /* hero side: logo card + info strip */
+  .hero-side{display:flex;flex-direction:column;gap:22px;align-items:flex-start}
+  .logo-card{
+    position:relative;
+    width:min(100%, 380px);
+    aspect-ratio:1/1;
+    background:#000;
+    border:1px solid rgba(212,212,212,.12);
+    display:grid;place-items:center;
+    transform:rotate(-3deg);
+    transition:transform .4s cubic-bezier(.2,.8,.2,1);
+  }
+  .logo-card:hover{transform:rotate(0deg)}
+  .logo-card img{width:88%;height:88%;object-fit:contain}
+  .logo-card .tape{
+    position:absolute;top:-14px;left:24px;width:110px;height:26px;
+    background:rgba(74,159,212,.55);
+    transform:rotate(-6deg);
+    backdrop-filter:blur(2px);
+    border:1px dashed rgba(255,255,255,.25);
+  }
+  .logo-card .tape.r{left:auto;right:24px;top:auto;bottom:-12px;background:rgba(230,48,48,.55);transform:rotate(4deg)}
+  .logo-card .corner{
+    position:absolute;bottom:10px;right:12px;
+    font-family:"Barlow Condensed",sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:.2em;font-size:10px;color:var(--silver)
+  }
+
+  .info-strip{
+    display:flex;gap:18px;flex-wrap:wrap;
+    border-top:1px solid rgba(255,255,255,.12);
+    padding-top:18px;width:100%;
+  }
+  .info-strip .item{display:flex;flex-direction:column;gap:4px}
+  .info-strip .k{font-family:"Barlow Condensed",sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.22em;font-size:10px;color:var(--mute)}
+  .info-strip .v{font-family:"Bebas Neue",sans-serif;font-size:22px;letter-spacing:.04em;color:#fff}
+  .info-strip .v .accent{color:var(--red)}
+
+  /* paint splatter SVG positioning */
+  .splat{position:absolute;pointer-events:none;z-index:0;opacity:.9;mix-blend-mode:screen}
+  .hero .splat-1{top:-60px;right:-80px;width:520px;transform:rotate(-12deg)}
+  .hero .splat-2{bottom:-40px;left:-40px;width:380px;transform:rotate(20deg)}
+
+  /* ---------- Marquee ---------- */
+  .marquee{
+    position:relative;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);
+    background:#070707;
+    overflow:hidden;padding:14px 0;
+  }
+  .marquee-track{display:flex;gap:42px;width:max-content;animation:scroll 38s linear infinite}
+  .marquee span{font-family:"Bebas Neue",sans-serif;font-size:34px;letter-spacing:.06em;color:var(--silver);display:inline-flex;align-items:center;gap:42px;white-space:nowrap}
+  .marquee span::after{content:"✦";color:var(--red);font-size:22px}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* ---------- Section base ---------- */
+  section{position:relative}
+  .wrap{max-width:1400px;margin:0 auto;padding:0 22px}
+  .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:60px}
+  .section-head .lbl{display:flex;align-items:center;gap:12px;color:var(--silver)}
+  .section-head .lbl::before{content:"";width:34px;height:1px;background:var(--red)}
+  .section-head h2{font-family:"Bebas Neue",sans-serif;font-size:clamp(54px,8vw,120px);line-height:.88;letter-spacing:-.005em;text-transform:uppercase;color:#fff;margin-top:14px}
+  .section-head h2 em{font-style:italic;color:var(--blue);font-weight:400}
+  .section-head .right{max-width:340px;color:#bdbab2;font-size:17px;font-weight:500;line-height:1.4}
+
+  /* ---------- Services ---------- */
+  .services{padding:130px 0 60px;position:relative;overflow:hidden}
+  .services .ghost-word{top:50%;left:50%;transform:translate(-50%,-50%);opacity:.55}
+  .svc-grid{
+    position:relative;z-index:2;
+    display:grid;grid-template-columns:1fr;gap:0;
+    border-top:1px solid rgba(255,255,255,.1);
+  }
+  @media(min-width:780px){.svc-grid{grid-template-columns:1fr 1fr}}
+  .svc{
+    position:relative;
+    padding:38px 28px 32px;
+    border-bottom:1px solid rgba(255,255,255,.1);
+    display:flex;flex-direction:column;gap:18px;
+    transition:background .25s ease;
+    overflow:hidden;
+    min-height:380px;
+  }
+  @media(min-width:780px){
+    .svc:nth-child(odd){border-right:1px solid rgba(255,255,255,.1)}
+  }
+  .svc:hover{background:#111}
+  .svc .num{
+    font-family:"Barlow Condensed",sans-serif;font-weight:700;
+    font-size:13px;letter-spacing:.3em;color:var(--mute)
+  }
+  .svc h3{
+    font-family:"Bebas Neue",sans-serif;
+    font-size:clamp(56px,7vw,96px);
+    line-height:.86;color:#fff;letter-spacing:-.005em;
+    text-transform:uppercase;
+  }
+  .svc h3 .accent{color:var(--red)}
+  .svc:nth-child(2) h3 .accent,
+  .svc:nth-child(3) h3 .accent{color:var(--blue)}
+  .svc .desc{color:#bdbab2;max-width:42ch;font-size:17px;line-height:1.4;font-weight:500}
+  .svc .pill-row{display:flex;flex-wrap:wrap;gap:8px}
+  .svc .pill{
+    font-family:"Barlow Condensed",sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.18em;font-size:11px;
+    border:1px solid rgba(255,255,255,.15);padding:6px 10px;color:#cfcdc6
+  }
+  .svc .barbers{display:flex;flex-wrap:wrap;gap:12px;margin-top:auto;padding-top:16px;border-top:1px solid rgba(255,255,255,.08)}
+  .svc .barber{display:inline-flex;align-items:center;gap:7px;font-family:"Barlow Condensed",sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.14em;font-size:12px;color:var(--mute);transition:color .2s ease}
+  .svc .barber:hover{color:#fff}
+  .svc .barber svg{width:14px;height:14px;fill:currentColor;flex-shrink:0}
+  .svc .glyph{
+    position:absolute;right:-30px;bottom:-30px;width:200px;height:200px;opacity:.06;
+    pointer-events:none;
+  }
+  .svc:hover .glyph{opacity:.14}
+
+  /* tape sticker on service */
+  .svc .sticker{
+    position:absolute;top:18px;right:18px;
+    font-family:"Bebas Neue",sans-serif;font-size:14px;letter-spacing:.1em;
+    background:var(--red);color:#fff;padding:4px 10px;transform:rotate(4deg);
+  }
+  .svc:nth-child(2) .sticker,
+  .svc:nth-child(3) .sticker{background:var(--blue);color:#000}
+
+  /* ---------- Gallery ---------- */
+  .gallery{padding:120px 0 100px;position:relative;overflow:hidden}
+  .gallery .head{padding:0 22px;max-width:1400px;margin:0 auto}
+  .gallery h2{font-family:"Bebas Neue",sans-serif;font-size:clamp(54px,8vw,120px);line-height:.88;text-transform:uppercase;color:#fff}
+  .gallery h2 em{font-style:italic;color:var(--red);font-weight:400}
+  .gallery .sub{color:#bdbab2;margin-top:14px;max-width:520px;font-size:17px;font-weight:500}
+  .gallery .meta-row{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:18px;margin-top:30px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,.1)}
+  .gallery .scroll-hint{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:12px;letter-spacing:.22em;text-transform:uppercase;font-weight:600}
+  .gallery .scroll-hint svg{width:36px;height:10px}
+
+  .scroller{
+    margin-top:36px;
+    display:flex;gap:18px;
+    overflow-x:auto;overflow-y:hidden;
+    padding:0 22px 26px;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-color:var(--red) #1a1a1a;
+  }
+  .scroller::-webkit-scrollbar{height:6px}
+  .scroller::-webkit-scrollbar-track{background:#1a1a1a}
+  .scroller::-webkit-scrollbar-thumb{background:var(--red)}
+  .card{
+    flex:0 0 auto;
+    width:min(78vw, 420px);
+    aspect-ratio:3/4;
+    background:#111;
+    position:relative;
+    overflow:hidden;
+    scroll-snap-align:start;
+    transition:transform .3s ease;
+  }
+  .card.wide{width:min(86vw, 560px);aspect-ratio:4/3}
+  .card:hover{transform:translateY(-6px)}
+  .card img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease, filter .5s ease;filter:grayscale(.2) contrast(1.05)}
+  .card:hover img{transform:scale(1.06);filter:grayscale(0) contrast(1.08)}
+  .card .tag{
+    position:absolute;left:14px;top:14px;
+    font-family:"Barlow Condensed",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.22em;font-size:11px;
+    background:rgba(10,10,10,.75);color:#fff;padding:6px 10px;backdrop-filter:blur(6px)
+  }
+  .card .num{
+    position:absolute;right:14px;bottom:12px;
+    font-family:"Bebas Neue",sans-serif;font-size:34px;letter-spacing:.04em;color:#fff;mix-blend-mode:difference
+  }
+  .card .caption{
+    position:absolute;left:14px;bottom:12px;right:60px;
+    font-family:"Barlow Condensed",sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.04em;font-size:18px;color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.7);line-height:1.1
+  }
+
+  /* ---------- CTA ---------- */
+  .cta-band{
+    padding:120px 22px;position:relative;overflow:hidden;
+    background:
+      linear-gradient(180deg, #0a0a0a 0%, #120606 50%, #0a0a0a 100%);
+    border-top:1px solid rgba(255,255,255,.06);
+    border-bottom:1px solid rgba(255,255,255,.06);
+  }
+  .cta-band .ghost-word{
+    top:50%;transform:translate(-50%,-50%);left:50%;
+    color:transparent;-webkit-text-stroke:1.5px rgba(230,48,48,.16);
+    text-stroke:1.5px rgba(230,48,48,.16);
+  }
+  .cta-inner{max-width:1100px;margin:0 auto;position:relative;z-index:2;text-align:center}
+  .cta-inner .small{color:var(--red);margin-bottom:18px}
+  .cta-inner h2{
+    font-family:"Bebas Neue",sans-serif;
+    font-size:clamp(64px,10vw,160px);line-height:.86;letter-spacing:-.005em;color:#fff;text-transform:uppercase
+  }
+  .cta-inner h2 .stroke{color:transparent;-webkit-text-stroke:2px #fff;text-stroke:2px #fff}
+  .cta-inner h2 .red{color:var(--red);font-style:italic}
+  .cta-inner .sub{margin:28px auto 0;max-width:620px;color:#cfcdc6;font-size:19px;line-height:1.4;font-weight:500}
+  .cta-inner .wa-big{
+    margin-top:42px;display:inline-flex;align-items:center;gap:14px;
+    background:var(--red);color:#fff;
+    padding:24px 40px;
+    font-family:"Bebas Neue",sans-serif;letter-spacing:.06em;font-size:30px;
+    clip-path:polygon(4% 0,100% 0,96% 100%,0 100%);
+    transition:transform .15s ease, background .15s ease;
+  }
+  .cta-inner .wa-big:hover{background:#ff3a3a;transform:translateY(-2px)}
+  .cta-inner .wa-big svg{width:30px;height:30px;fill:#fff}
+  .cta-inner .phone{margin-top:14px;font-family:"Barlow Condensed",sans-serif;font-weight:700;letter-spacing:.18em;text-transform:uppercase;font-size:14px;color:var(--mute)}
+
+  /* ---------- Footer ---------- */
+  footer{padding:80px 22px 40px;position:relative;overflow:hidden}
+  footer .wrap{display:grid;grid-template-columns:1fr;gap:40px}
+  @media(min-width:780px){footer .wrap{grid-template-columns:1.4fr .8fr .8fr}}
+  footer .brand{display:flex;align-items:center;gap:14px}
+  footer .brand img{height:60px;width:60px;border-radius:50%;border:1px solid rgba(255,255,255,.1)}
+  footer .brand .t{font-family:"Bebas Neue",sans-serif;font-size:28px;letter-spacing:.05em}
+  footer .brand .s{font-family:"Barlow Condensed",sans-serif;font-size:11px;letter-spacing:.32em;color:var(--mute);text-transform:uppercase;margin-top:2px;display:block}
+  footer h4{font-family:"Bebas Neue",sans-serif;font-size:22px;letter-spacing:.06em;color:#fff;margin-bottom:14px}
+  footer ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+  footer li{font-family:"Barlow Condensed",sans-serif;font-weight:500;color:#bdbab2;font-size:16px;letter-spacing:.04em}
+  footer li b{color:#fff}
+  footer .ig{display:inline-flex;align-items:center;gap:10px;color:#fff;margin-top:10px}
+  footer .ig svg{width:20px;height:20px;fill:#fff}
+  footer .ig:hover{color:var(--red)}
+  footer .bottom{margin-top:50px;border-top:1px solid rgba(255,255,255,.1);padding-top:22px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-family:"Barlow Condensed",sans-serif;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--mute);font-weight:600}
+  footer .bottom .red{color:var(--red)}
+
+  /* ---------- Scroll reveal ---------- */
+  [data-reveal]{opacity:0;transform:translateY(28px);transition:opacity .8s ease, transform .8s cubic-bezier(.2,.8,.2,1)}
+  [data-reveal].in{opacity:1;transform:none}
+  [data-reveal="left"]{transform:translateX(-40px)}
+  [data-reveal="left"].in{transform:none}
+  [data-reveal="right"]{transform:translateX(40px)}
+  [data-reveal="right"].in{transform:none}
+
+  /* gallery wider on bigger screens */
+  @media(min-width:980px){
+    .card{width:380px}
+    .card.wide{width:540px}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="nav" data-screen-label="00 Nav">
+  <a class="nav-logo" href="#top">
+    <img src="assets/gallery/image.png" alt="Icarawaii Club" />
+    <span class="wm">
+      <b>ICARAWAII</b>
+      <span>Club · Fortaleza</span>
+    </span>
+  </a>
+  <div class="nav-links">
+    <a href="#servicos">Serviços</a>
+    <a href="#galeria">Galeria</a>
+    <a href="#contato">Contato</a>
+  </div>
+  <a class="wa-btn" href="https://wa.me/5585999999999" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.978-1.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
+    <span>WhatsApp</span>
+  </a>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="top" data-screen-label="01 Hero">
+  <div class="ghost-word">ICARAWAII</div>
+
+  <!-- decorative splatters -->
+  <svg class="splat splat-1" viewBox="0 0 400 400" aria-hidden="true">
+    <g fill="#e63030" opacity=".55">
+      <ellipse cx="200" cy="200" rx="140" ry="70" transform="rotate(-18 200 200)"/>
+      <circle cx="80" cy="120" r="22"/>
+      <circle cx="340" cy="280" r="14"/>
+      <circle cx="310" cy="100" r="8"/>
+      <path d="M50 240 q60 -30 120 0 t140 -20" stroke="#e63030" stroke-width="14" fill="none" opacity=".4"/>
+    </g>
+  </svg>
+  <svg class="splat splat-2" viewBox="0 0 400 400" aria-hidden="true">
+    <g fill="#4a9fd4" opacity=".5">
+      <ellipse cx="200" cy="200" rx="120" ry="60" transform="rotate(12 200 200)"/>
+      <circle cx="60" cy="280" r="18"/>
+      <circle cx="330" cy="120" r="12"/>
+      <circle cx="100" cy="320" r="6"/>
+    </g>
+  </svg>
+
+  <div class="hero-grid">
+    <div class="hero-main">
+      <div class="hero-meta" data-reveal>
+        <span class="dot"></span>
+        <span class="small" style="color:#fff">Aberto agora</span>
+        <span class="small" style="color:var(--mute)">·</span>
+        <span class="small" style="color:var(--silver)">Fortaleza · CE</span>
+        <span class="small" style="color:var(--mute)">·</span>
+        <span class="small" style="color:var(--silver)">EST. 2021</span>
+      </div>
+
+      <h1 data-reveal>
+        <span class="stroke">Não é</span><br/>
+        barbearia.<br/>
+        <span class="red">É clube.</span>
+      </h1>
+
+      <p class="tagline" data-reveal>
+        <b>Barbearia, tatuagem, streetwear e sinuca</b> debaixo do mesmo teto. Um ponto de encontro da rua, da arte e da cultura no coração do Ceará.
+      </p>
+
+      <div class="hero-ctas" data-reveal>
+        <a class="btn btn-primary" href="https://wa.me/5585999999999" target="_blank" rel="noopener">
+          Agendar agora <span class="arrow">→</span>
+        </a>
+        <a class="btn btn-ghost" href="#servicos">
+          Ver serviços <span class="arrow">↓</span>
+        </a>
+      </div>
+    </div>
+
+    <aside class="hero-side" data-reveal="right">
+      <div class="logo-card">
+        <div class="tape"></div>
+        <div class="tape r"></div>
+        <img src="assets/gallery/image.png" alt="Icarawaii Club logo" />
+        <span class="corner">CLUB · CEARÁ</span>
+      </div>
+
+      <div class="info-strip">
+        <div class="item">
+          <span class="k">Endereço</span>
+          <a class="v" href="https://maps.app.goo.gl/n47ajJzVrx4iVEe87" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">AV. Central do Icaraí 367 loja 01, icaraí Caucaia - CE</a>
+        </div>
+        <div class="item">
+          <span class="k">Horário</span>
+          <span class="v">seg–Sáb · 09–19h</span>
+        </div>
+        <div class="item">
+          <span class="k">Insta</span>
+          <a class="v" href="https://www.instagram.com/icarawaiiclub" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">@icarawaiiclub</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ MARQUEE ============ -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>Barbearia</span><span>Tatuagem</span><span>Streetwear</span><span>Sinuca</span><span>Lounge</span><span>Fortaleza · CE</span>
+    <span>Barbearia</span><span>Tatuagem</span><span>Streetwear</span><span>Sinuca</span><span>Lounge</span><span>Fortaleza · CE</span>
+  </div>
+</div>
+
+<!-- ============ SERVICES ============ -->
+<section class="services" id="servicos" data-screen-label="02 Serviços">
+  <div class="ghost-word">CLUB</div>
+  <div class="wrap" style="position:relative;z-index:2">
+    <div class="section-head">
+      <div>
+        <div class="lbl"><span class="small">EXPERIÊNCIAS EXCLUSIVAS</span></div>
+        <h2 data-reveal>Quatro mundos.<em><br/>UM CLUBE SÓ.</em></h2>
+      </div>
+      <div class="right" data-reveal="right">
+      </div>
+    </div>
+
+    <div class="svc-grid">
+      <article class="svc" data-reveal>
+        <span class="sticker">Carro chefe</span>
+        <span class="num">01 / 04 — Cadeira</span>
+        <h3>Barbe<span class="accent">aria</span></h3>
+        <p class="desc">Cabelo alinhado, barba de respeito e a resenha de sempre.</p>
+        <div class="pill-row">
+          <span class="pill">Corte clássico</span>
+          <span class="pill">Degradê</span>
+          <span class="pill">Barba</span>
+          <span class="pill">Pigmentação</span>
+        </div>
+        <div class="barbers">
+          <a class="barber" href="https://www.instagram.com/thepeixebarber" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2C4.243 2 2 4.243 2 7v10c0 2.757 2.243 5 5 5h10c2.757 0 5-2.243 5-5V7c0-2.757-2.243-5-5-5H7zm0 2h10c1.654 0 3 1.346 3 3v10c0 1.654-1.346 3-3 3H7c-1.654 0-3-1.346-3-3V7c0-1.654 1.346-3 3-3zm11 1a1 1 0 100 2 1 1 0 000-2zm-6 2a5 5 0 100 10 5 5 0 000-10zm0 2a3 3 0 110 6 3 3 0 010-6z"/></svg><span>@thepeixebarber</span></a>
+          <a class="barber" href="https://www.instagram.com/yurineves07/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2C4.243 2 2 4.243 2 7v10c0 2.757 2.243 5 5 5h10c2.757 0 5-2.243 5-5V7c0-2.757-2.243-5-5-5H7zm0 2h10c1.654 0 3 1.346 3 3v10c0 1.654-1.346 3-3 3H7c-1.654 0-3-1.346-3-3V7c0-1.654 1.346-3 3-3zm11 1a1 1 0 100 2 1 1 0 000-2zm-6 2a5 5 0 100 10 5 5 0 000-10zm0 2a3 3 0 110 6 3 3 0 010-6z"/></svg><span>@yurineves07</span></a>
+        </div>
+        <svg class="glyph" viewBox="0 0 100 100" aria-hidden="true"><path d="M20 20 L80 80 M80 20 L20 80" stroke="#fff" stroke-width="6" fill="none"/><circle cx="20" cy="20" r="10" stroke="#fff" stroke-width="3" fill="none"/><circle cx="80" cy="80" r="10" stroke="#fff" stroke-width="3" fill="none"/></svg>
+      </article>
+
+      <article class="svc" data-reveal>
+        <span class="sticker">Sob agendamento</span>
+        <span class="num">02 / 04 — Tinta na pele</span>
+        <h3>Tatua<span class="accent">gem</span></h3>
+        <p class="desc">Estúdio próprio com artistas residente. Black work, fineline, lettering e flash sheets exclusivos do clube.</p>
+        <div class="pill-row">
+          <span class="pill">Black work</span>
+          <span class="pill">Fineline</span>
+          <span class="pill">Lettering</span>
+          <span class="pill">Flash $</span>
+        </div>
+        <div class="barbers">
+          <a class="barber" href="https://www.instagram.com/slendertattoo/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2C4.243 2 2 4.243 2 7v10c0 2.757 2.243 5 5 5h10c2.757 0 5-2.243 5-5V7c0-2.757-2.243-5-5-5H7zm0 2h10c1.654 0 3 1.346 3 3v10c0 1.654-1.346 3-3 3H7c-1.654 0-3-1.346-3-3V7c0-1.654 1.346-3 3-3zm11 1a1 1 0 100 2 1 1 0 000-2zm-6 2a5 5 0 100 10 5 5 0 000-10zm0 2a3 3 0 110 6 3 3 0 010-6z"/></svg><span>@slendertattoo</span></a>
+        </div>
+        <svg class="glyph" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z" stroke="#fff" stroke-width="3" fill="none"/></svg>
+      </article>
+
+      <article class="svc" data-reveal>
+        <span class="sticker">Drops semanais</span>
+        <span class="num">03 / 04 — Loja física</span>
+        <h3>Street<span class="accent">wear</span></h3>
+        <p class="desc">Linha própria de camisetas, moletons e bonés. Edições limitadas, numeradas e assinadas dentro do clube.</p>
+        <div class="pill-row">
+          <span class="pill">Tees</span>
+          <span class="pill">Hoodies</span>
+          <span class="pill">Caps</span>
+          <span class="pill">Acessórios</span>
+        </div>
+        <div class="barbers">
+          <a class="barber" href="https://www.instagram.com/lojaterradosurff/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2C4.243 2 2 4.243 2 7v10c0 2.757 2.243 5 5 5h10c2.757 0 5-2.243 5-5V7c0-2.757-2.243-5-5-5H7zm0 2h10c1.654 0 3 1.346 3 3v10c0 1.654-1.346 3-3 3H7c-1.654 0-3-1.346-3-3V7c0-1.654 1.346-3 3-3zm11 1a1 1 0 100 2 1 1 0 000-2zm-6 2a5 5 0 100 10 5 5 0 000-10zm0 2a3 3 0 110 6 3 3 0 010-6z"/></svg><span>@lojaterradosurff</span></a>
+        </div>
+        <svg class="glyph" viewBox="0 0 100 100" aria-hidden="true"><path d="M30 20 L20 30 L20 80 L80 80 L80 30 L70 20 L60 25 Q50 35 40 25 Z" stroke="#fff" stroke-width="3" fill="none"/></svg>
+      </article>
+
+      <article class="svc" data-reveal>
+        <span class="sticker">Mesa aberta</span>
+        <span class="num">04 / 04 — Sinuca & sofá</span>
+        <h3>Lounge <span class="accent">&amp; Sinuca</span></h3>
+        <p class="desc">Mesa de sinuca, som no ponto certo e cerveja gelada. Espaço pra esperar o corte ou só pra resenhar.</p>
+        <div class="pill-row">
+          <span class="pill">Mesa oficial</span>
+          <span class="pill">Bar</span>
+          <span class="pill">Som</span>
+          <span class="pill">Reservas</span>
+        </div>
+        <svg class="glyph" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="40" stroke="#fff" stroke-width="3" fill="none"/><circle cx="50" cy="50" r="8" fill="#fff"/></svg>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GALLERY ============ -->
+<section class="gallery" id="galeria" data-screen-label="03 Galeria">
+  <div class="head">
+    <div class="lbl" style="display:flex;align-items:center;gap:12px;color:var(--silver)">
+      <span style="width:34px;height:1px;background:var(--blue);display:inline-block"></span>
+      <span class="small">No clube</span>
+    </div>
+    <h2 data-reveal style="margin-top:14px">Cenas <em>do</em><br/>clube.</h2>
+    <p class="sub" data-reveal>Corte, tattoo, resenha e sinuca. Um pedaço do que rola dentro do Icarawaii — arrasta pro lado.</p>
+    <div class="meta-row">
+      <div class="small" style="color:var(--mute)"> arraste lateralmente</div>
+      <div class="scroll-hint">
+        <span>Scroll</span>
+        <svg viewBox="0 0 36 10" fill="none"><path d="M0 5 L34 5 M28 1 L34 5 L28 9" stroke="#e63030" stroke-width="1.5"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroller" id="scroller">
+    <div class="card wide">
+      <span class="tag">Barbearia</span>
+      <img src="assets/gallery/image 62.png" alt="Barbearia" />
+      <span class="caption">Cadeira 01 · cortes na navalha</span>
+      <span class="num">01</span>
+    </div>
+    <div class="card">
+      <span class="tag">Tatuagem</span>
+      <img src="assets/gallery/image 66.png" alt="Tatuagem" />
+      <span class="caption">Tinta preta · fineline</span>
+      <span class="num">02</span>
+    </div>
+    <div class="card">
+      <span class="tag">Streetwear</span>
+      <img src="assets/gallery/image 64.png" alt="Streetwear" />
+      <span class="caption">Drop · edição limitada</span>
+      <span class="num">03</span>
+    </div>
+    <div class="card wide">
+      <span class="tag">Lounge</span>
+      <img src="assets/gallery/image 65.png" alt="Lounge" />
+      <span class="caption">Drop · edição limitada</span>
+      <span class="num">04</span>
+    </div>
+    <div class="card wide">
+      <span class="tag">Lounge</span>
+      <img src="assets/gallery/image 65.png" alt="Lounge" />
+      <span class="caption">Drop · edição limitada</span>
+      <span class="num">05</span>
+    </div>
+    <div class="card">
+      <span class="tag">Clube</span>
+      <img src="assets/gallery/image 65 (1).png" alt="Clube" />
+      <span class="caption">Icarawaii · Caucaia CE</span>
+      <span class="num">06</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="cta-band" id="contato" data-screen-label="04 Contato">
+  <div class="ghost-word">FALA AÍ</div>
+  <div class="cta-inner">
+    <div class="small" data-reveal>Direto no WhatsApp · resposta rápida</div>
+    <h2 data-reveal>
+      <span class="stroke">Marca</span><br/>
+      <span class="red">tua hora.</span>
+    </h2>
+    <p class="sub" data-reveal>Sem fila, sem espera. Chama no zap, conta o que precisa e a gente encaixa na agenda da semana.</p>
+    <a class="wa-big" href="https://wa.me/5585999999999" target="_blank" rel="noopener" data-reveal>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.978-1.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
+      <span>Chamar no WhatsApp</span>
+    </a>
+    <div class="phone">+55 85 9 9999-9999</div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer data-screen-label="05 Footer">
+  <div class="wrap">
+    <div>
+      <div class="brand">
+        <img src="assets/gallery/image.png" alt="Icarawaii" />
+        <div>
+          <div class="t">ICARAWAII CLUB</div>
+          <span class="s">Fortaleza · Ceará · Brasil</span>
+        </div>
+      </div>
+      <p style="margin-top:20px;color:#bdbab2;max-width:380px;line-height:1.45;font-size:16px;font-weight:500">
+        Barbearia, estúdio de tatuagem, loja de streetwear e lounge com sinuca. Um clube da rua.
+      </p>
+      <a class="ig" href="https://www.instagram.com/icarawaiiclub" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2C4.243 2 2 4.243 2 7v10c0 2.757 2.243 5 5 5h10c2.757 0 5-2.243 5-5V7c0-2.757-2.243-5-5-5H7zm0 2h10c1.654 0 3 1.346 3 3v10c0 1.654-1.346 3-3 3H7c-1.654 0-3-1.346-3-3V7c0-1.654 1.346-3 3-3zm11 1a1 1 0 100 2 1 1 0 000-2zm-6 2a5 5 0 100 10 5 5 0 000-10zm0 2a3 3 0 110 6 3 3 0 010-6z"/></svg>
+        <b>@icarawaiiclub</b>
+      </a>
+    </div>
+
+    <div>
+      <h4>Visite</h4>
+      <ul>
+        <li><b>Endereço</b><br/><a href="https://maps.app.goo.gl/n47ajJzVrx4iVEe87" target="_blank" rel="noopener" style="color:inherit">AV. Central do Icaraí 367<br/>loja 01 · Icaraí · Caucaia - CE</a></li>
+        <li style="margin-top:10px"><b>Horário</b><br/>Seg–Sáb · 09h–19h</li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>Contato</h4>
+      <ul>
+        <li><b>WhatsApp</b><br/>+55 85 9 9999-9999</li>
+        <li style="margin-top:10px"><b>Instagram</b><br/><a href="https://www.instagram.com/icarawaiiclub" target="_blank" rel="noopener" style="color:inherit">@icarawaiiclub</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wrap bottom">
+    <span>© 2026 Icarawaii Club</span>
+    <span><span class="red">●</span> Feito em Caucaia</span>
+    <a href="https://www.instagram.com/icarawaiiclub" target="_blank" rel="noopener" style="color:inherit">@icarawaiiclub</a>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // Intersection Observer reveal
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:.12, rootMargin:"0px 0px -8% 0px"});
+  document.querySelectorAll('[data-reveal]').forEach(el=>io.observe(el));
+
+  // Horizontal scroll with wheel (desktop nice-to-have)
+  const scroller = document.getElementById('scroller');
+  if(scroller){
+    scroller.addEventListener('wheel', (e)=>{
+      if(Math.abs(e.deltaY) > Math.abs(e.deltaX)){
+        scroller.scrollLeft += e.deltaY;
+        // only prevent default when there's room to scroll
+        const max = scroller.scrollWidth - scroller.clientWidth;
+        if(scroller.scrollLeft > 0 && scroller.scrollLeft < max) e.preventDefault();
+      }
+    }, {passive:false});
+  }
+</script>
+</body>
+</html>

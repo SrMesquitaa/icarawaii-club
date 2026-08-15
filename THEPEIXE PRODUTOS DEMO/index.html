@@ -1,0 +1,1062 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ThePeixe Produtos — Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,500;1,700;1,900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0a;
+    --ink:#f2efe8;
+    --silver:#d4d4d4;
+    --mute:#7a7a7a;
+    --red:#e63030;
+    --blue:#4a9fd4;
+    --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.45 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.5'/></svg>");
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);font-family:"Barlow Condensed", sans-serif;font-weight:400;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  body{position:relative}
+  body::before{content:"";position:fixed;inset:0;background-image:var(--grain);opacity:.08;pointer-events:none;z-index:1000;mix-blend-mode:overlay}
+  a{color:inherit;text-decoration:none}
+  img{display:block;max-width:100%}
+  ::selection{background:var(--red);color:#fff}
+
+  .small{font-family:"Barlow Condensed",sans-serif;font-weight:500;text-transform:uppercase;letter-spacing:.22em;font-size:11px}
+
+  .demo-flag{
+    position:fixed;bottom:16px;right:16px;z-index:2000;
+    background:var(--blue);color:#04070a;font-family:"Barlow Condensed",sans-serif;font-weight:800;
+    text-transform:uppercase;letter-spacing:.14em;font-size:11px;padding:10px 14px;
+    box-shadow:0 6px 24px rgba(0,0,0,.5);max-width:230px;line-height:1.4;
+  }
+
+  /* ---------- Navbar ---------- */
+  .nav{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 22px;
+    background:linear-gradient(to bottom, rgba(10,10,10,.92), rgba(10,10,10,.55) 70%, rgba(10,10,10,0));
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+  }
+  .nav-logo{display:flex;align-items:center;gap:12px}
+  .logo-circ{height:46px;width:46px;border-radius:50%;border:1px solid rgba(255,255,255,.14);background:radial-gradient(circle at 30% 30%, #17324a, #0a0a0a);display:grid;place-items:center;font-family:"Bebas Neue",sans-serif;font-size:16px;color:var(--blue)}
+  .nav-logo .wm{display:flex;flex-direction:column;line-height:1}
+  .nav-logo .wm b{font-family:"Bebas Neue",sans-serif;font-size:20px;letter-spacing:.04em}
+  .nav-logo .wm span{font-family:"Barlow Condensed",sans-serif;font-size:10px;letter-spacing:.32em;color:var(--mute);text-transform:uppercase;margin-top:2px}
+  .nav-links{display:flex;gap:24px;align-items:center}
+  .nav-links a{font-family:"Barlow Condensed",sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.16em;font-size:12px;color:var(--silver);position:relative;padding:6px 0}
+  .nav-links a:hover{color:#fff}
+  .nav-links a::after{content:"";position:absolute;left:0;right:100%;bottom:0;height:2px;background:var(--red);transition:right .25s ease}
+  .nav-links a:hover::after{right:0}
+  .wa-btn{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--red);color:#fff;
+    padding:11px 18px 11px 14px;border:0;cursor:pointer;
+    font-family:"Bebas Neue",sans-serif;letter-spacing:.08em;font-size:17px;
+    clip-path: polygon(8% 0,100% 0,92% 100%,0 100%);
+    position:relative;
+    transition:transform .15s ease, background .15s ease;
+  }
+  .wa-btn:hover{background:#ff3a3a;transform:translateY(-1px)}
+  .wa-btn svg{width:18px;height:18px;fill:#fff}
+  @media (max-width: 900px){
+    .nav-links{display:none}
+    .nav{padding:10px 14px}
+    .logo-circ{height:40px;width:40px}
+  }
+
+  .ghost-word{
+    position:absolute;inset:auto 0 auto 0;
+    font-family:"Bebas Neue",sans-serif;
+    font-size:clamp(180px, 32vw, 520px);
+    line-height:.78;
+    color:transparent;
+    -webkit-text-stroke:1.5px rgba(212,212,212,.10);
+    letter-spacing:-.01em;
+    text-align:center;
+    user-select:none;pointer-events:none;
+    white-space:nowrap;
+    z-index:0;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;min-height:100vh;min-height:100svh;
+    padding:130px 22px 60px;
+    display:flex;align-items:center;
+    overflow:hidden;
+    isolation:isolate;
+  }
+  .hero .ghost-word{top:18vh;left:50%;transform:translateX(-50%)}
+  .hero-grid{
+    position:relative;z-index:2;
+    width:100%;max-width:1400px;margin:0 auto;
+    display:grid;grid-template-columns: 1fr;
+    gap:30px;align-items:end;
+  }
+  @media(min-width:980px){
+    .hero-grid{grid-template-columns: 1.4fr .9fr;align-items:end;gap:40px}
+  }
+
+  .hero-meta{display:flex;gap:14px;align-items:center;margin-bottom:52px;flex-wrap:wrap}
+  .hero-meta .dot{width:9px;height:9px;border-radius:50%;background:var(--red);box-shadow:0 0 0 4px rgba(230,48,48,.18);animation:pulse 1.8s infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(230,48,48,.18)}50%{box-shadow:0 0 0 9px rgba(230,48,48,0)}}
+
+  .hero h1{
+    font-family:"Bebas Neue",sans-serif;
+    font-size:clamp(58px, 10.5vw, 175px);
+    line-height:.84;letter-spacing:-.005em;
+    color:#f6f4ee;
+    text-transform:uppercase;
+  }
+  .hero h1 .stroke{
+    color:transparent;
+    -webkit-text-stroke:2px var(--silver);
+  }
+  .hero h1 .red{color:var(--red);font-style:italic;display:inline-block;transform:translateY(-.04em)}
+
+  .tagline{
+    margin-top:34px;
+    max-width:580px;
+    font-family:"Barlow Condensed",sans-serif;
+    font-weight:500;
+    font-size:clamp(18px,2.1vw,22px);
+    line-height:1.32;
+    color:#cfcdc6;
+  }
+  .tagline b{color:#fff;font-weight:700}
+
+  .hero-ctas{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:12px;
+    padding:18px 26px;
+    font-family:"Bebas Neue",sans-serif;letter-spacing:.06em;font-size:22px;
+    border:0;cursor:pointer;
+    transition:transform .15s ease;
+    position:relative;
+  }
+  .btn:hover{transform:translateY(-2px)}
+  .btn .arrow{font-size:20px;transition:transform .2s ease}
+  .btn:hover .arrow{transform:translateX(4px)}
+  .btn-primary{background:var(--red);color:#fff;clip-path:polygon(6% 0,100% 0,94% 100%,0 100%);padding:18px 32px}
+  .btn-ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.22)}
+  .btn-ghost:hover{border-color:var(--blue);color:var(--blue)}
+
+  .hero-side{display:flex;flex-direction:column;gap:22px;align-items:flex-start}
+  .logo-card{
+    position:relative;
+    width:min(100%, 380px);
+    aspect-ratio:1/1;
+    background:radial-gradient(circle at 35% 30%, #1a1a1a, #000 70%);
+    border:1px solid rgba(212,212,212,.12);
+    display:grid;place-items:center;
+    transform:rotate(-3deg);
+    transition:transform .4s cubic-bezier(.2,.8,.2,1);
+    overflow:hidden;
+  }
+  .logo-card:hover{transform:rotate(0deg)}
+  .logo-card img{width:100%;height:100%;object-fit:cover;filter:grayscale(.15) contrast(1.08)}
+  .logo-card .tape{
+    position:absolute;top:-14px;left:24px;width:110px;height:26px;
+    background:rgba(74,159,212,.55);
+    transform:rotate(-6deg);
+    backdrop-filter:blur(2px);
+    border:1px dashed rgba(255,255,255,.25);
+    z-index:2;
+  }
+  .logo-card .tape.r{left:auto;right:24px;top:auto;bottom:-12px;background:rgba(230,48,48,.55);transform:rotate(4deg)}
+  .logo-card .corner{
+    position:absolute;bottom:10px;right:12px;z-index:2;
+    font-family:"Barlow Condensed",sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:.2em;font-size:10px;color:var(--silver);text-shadow:0 1px 6px rgba(0,0,0,.8)
+  }
+
+  .info-strip{
+    display:flex;gap:18px;flex-wrap:wrap;
+    border-top:1px solid rgba(255,255,255,.12);
+    padding-top:18px;width:100%;
+  }
+  .info-strip .item{display:flex;flex-direction:column;gap:4px}
+  .info-strip .k{font-family:"Barlow Condensed",sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.22em;font-size:10px;color:var(--mute)}
+  .info-strip .v{font-family:"Bebas Neue",sans-serif;font-size:20px;letter-spacing:.04em;color:#fff}
+
+  .splat{position:absolute;pointer-events:none;z-index:0;opacity:.9;mix-blend-mode:screen}
+  .hero .splat-1{top:-60px;right:-80px;width:520px;transform:rotate(-12deg)}
+  .hero .splat-2{bottom:-40px;left:-40px;width:380px;transform:rotate(20deg)}
+
+  /* ---------- Marquee ---------- */
+  .marquee{
+    position:relative;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);
+    background:#070707;
+    overflow:hidden;padding:14px 0;
+  }
+  .marquee-track{display:flex;gap:42px;width:max-content;animation:scroll 30s linear infinite}
+  .marquee span{font-family:"Bebas Neue",sans-serif;font-size:32px;letter-spacing:.06em;color:var(--silver);display:inline-flex;align-items:center;gap:42px;white-space:nowrap}
+  .marquee span::after{content:"✦";color:var(--red);font-size:20px}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  section{position:relative}
+  .wrap{max-width:1400px;margin:0 auto;padding:0 22px}
+  .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:40px}
+  .section-head .lbl{display:flex;align-items:center;gap:12px;color:var(--silver)}
+  .section-head .lbl::before{content:"";width:34px;height:1px;background:var(--red)}
+  .section-head h2{font-family:"Bebas Neue",sans-serif;font-size:clamp(46px,6.5vw,96px);line-height:.88;letter-spacing:-.005em;text-transform:uppercase;color:#fff;margin-top:14px}
+  .section-head h2 em{font-style:italic;color:var(--blue);font-weight:400}
+  .section-head .count{font-family:"Bebas Neue",sans-serif;font-size:20px;color:var(--mute)}
+
+  /* ---------- Busca ---------- */
+  .search-wrap{position:relative;max-width:420px;margin-bottom:22px}
+  .search-wrap input{
+    width:100%;background:#101010;border:1px solid rgba(255,255,255,.14);color:#fff;
+    padding:14px 16px 14px 44px;font-family:"Barlow Condensed",sans-serif;font-weight:500;font-size:15px;
+    outline:none;transition:border-color .2s ease;
+  }
+  .search-wrap input::placeholder{color:var(--mute)}
+  .search-wrap input:focus{border-color:var(--blue)}
+  .search-wrap svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;fill:var(--mute);pointer-events:none}
+
+  /* ---------- Categorias fixas (chips) ---------- */
+  .cat-nav{
+    position:sticky;top:var(--nav-h,78px);z-index:40;
+    display:flex;gap:8px;overflow-x:auto;
+    padding:14px 0;margin-bottom:36px;
+    background:rgba(10,10,10,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    border-bottom:1px solid rgba(255,255,255,.08);
+    scrollbar-width:none;
+  }
+  .cat-nav::-webkit-scrollbar{display:none}
+  .cat-chip{
+    flex:0 0 auto;white-space:nowrap;
+    font-family:"Barlow Condensed",sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.12em;font-size:12px;
+    color:var(--silver);background:transparent;border:1px solid rgba(255,255,255,.16);
+    padding:9px 16px;cursor:pointer;transition:all .2s ease;
+  }
+  .cat-chip:hover{color:#fff;border-color:rgba(255,255,255,.32)}
+  .cat-chip.active{background:var(--red);border-color:var(--red);color:#fff}
+
+  /* ---------- Catálogo ---------- */
+  .catalog{padding:130px 0 40px;position:relative;overflow:hidden}
+  .catalog .ghost-word{top:80px;left:50%;transform:translateX(-50%);opacity:.5}
+  .cat-group{position:relative;z-index:2;margin-bottom:74px}
+  .cat-head{display:flex;align-items:baseline;gap:16px;margin-bottom:24px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.1)}
+  .cat-head .idx{font-family:"Bebas Neue",sans-serif;font-size:22px;color:var(--red)}
+  .cat-head h3{font-family:"Bebas Neue",sans-serif;font-size:clamp(28px,3.4vw,42px);text-transform:uppercase;color:#fff;letter-spacing:.01em}
+  .cat-head .n{margin-left:auto;font-family:"Barlow Condensed",sans-serif;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
+
+  .prod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  @media(min-width:640px){.prod-grid{grid-template-columns:repeat(3,1fr)}}
+  @media(min-width:980px){.prod-grid{grid-template-columns:repeat(4,1fr)}}
+
+  .prod-card{
+    position:relative;background:#101010;border:1px solid rgba(255,255,255,.07);
+    display:flex;flex-direction:column;overflow:hidden;
+    transition:transform .25s ease, border-color .25s ease;
+  }
+  .prod-card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.18)}
+  .prod-card .ph{aspect-ratio:1/1;overflow:hidden;background:#000;cursor:pointer}
+  .prod-card .ph img{width:100%;height:100%;object-fit:cover;filter:grayscale(.1) contrast(1.05);transition:transform .5s ease}
+  .prod-card:hover .ph img{transform:scale(1.06)}
+  .ph-fallback{
+    width:100%;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;
+    padding:12px;background:#141414;color:var(--mute);
+    font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.06em;
+  }
+  .prod-card .info{padding:14px 14px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .prod-card .info .nm{font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:14px;line-height:1.25;color:#e9e6df;text-transform:uppercase;letter-spacing:.01em;min-height:2.5em;cursor:pointer}
+  .prod-card .info .pr{margin-top:auto;font-family:"Bebas Neue",sans-serif;font-size:24px;color:var(--blue)}
+
+  /* ---------- CTA ---------- */
+  .cta-band{
+    padding:120px 22px;position:relative;overflow:hidden;
+    background:linear-gradient(180deg, #0a0a0a 0%, #120606 50%, #0a0a0a 100%);
+    border-top:1px solid rgba(255,255,255,.06);
+    border-bottom:1px solid rgba(255,255,255,.06);
+  }
+  .cta-band .ghost-word{top:50%;transform:translate(-50%,-50%);left:50%;color:transparent;-webkit-text-stroke:1.5px rgba(230,48,48,.16)}
+  .cta-inner{max-width:1100px;margin:0 auto;position:relative;z-index:2;text-align:center}
+  .cta-inner .small{color:var(--red);margin-bottom:18px}
+  .cta-inner h2{font-family:"Bebas Neue",sans-serif;font-size:clamp(54px,8.5vw,130px);line-height:.86;letter-spacing:-.005em;color:#fff;text-transform:uppercase}
+  .cta-inner h2 .stroke{color:transparent;-webkit-text-stroke:2px #fff}
+  .cta-inner h2 .red{color:var(--red);font-style:italic}
+  .cta-inner .sub{margin:28px auto 0;max-width:620px;color:#cfcdc6;font-size:19px;line-height:1.4;font-weight:500}
+  .cta-inner .wa-big{
+    margin-top:42px;display:inline-flex;align-items:center;gap:14px;
+    background:var(--red);color:#fff;
+    padding:24px 40px;
+    font-family:"Bebas Neue",sans-serif;letter-spacing:.06em;font-size:28px;
+    clip-path:polygon(4% 0,100% 0,96% 100%,0 100%);
+    transition:transform .15s ease, background .15s ease;
+  }
+  .cta-inner .wa-big:hover{background:#ff3a3a;transform:translateY(-2px)}
+  .cta-inner .wa-big svg{width:28px;height:28px;fill:#fff}
+  .cta-inner .phone{margin-top:14px;font-family:"Barlow Condensed",sans-serif;font-weight:700;letter-spacing:.18em;text-transform:uppercase;font-size:14px;color:var(--mute)}
+
+  /* ---------- Footer ---------- */
+  footer{padding:80px 22px 100px;position:relative;overflow:hidden}
+  footer .wrap{display:grid;grid-template-columns:1fr;gap:40px}
+  @media(min-width:780px){footer .wrap{grid-template-columns:1.4fr .8fr .8fr}}
+  footer .brand{display:flex;align-items:center;gap:14px}
+  footer .brand .t{font-family:"Bebas Neue",sans-serif;font-size:26px;letter-spacing:.05em}
+  footer .brand .s{font-family:"Barlow Condensed",sans-serif;font-size:11px;letter-spacing:.32em;color:var(--mute);text-transform:uppercase;margin-top:2px;display:block}
+  footer h4{font-family:"Bebas Neue",sans-serif;font-size:22px;letter-spacing:.06em;color:#fff;margin-bottom:14px}
+  footer ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+  footer li{font-family:"Barlow Condensed",sans-serif;font-weight:500;color:#bdbab2;font-size:16px;letter-spacing:.04em}
+  footer li b{color:#fff}
+  footer .bottom{margin-top:50px;border-top:1px solid rgba(255,255,255,.1);padding-top:22px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-family:"Barlow Condensed",sans-serif;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--mute);font-weight:600}
+  footer .bottom .red{color:var(--red)}
+
+  [data-reveal]{opacity:0;transform:translateY(28px);transition:opacity .8s ease, transform .8s cubic-bezier(.2,.8,.2,1)}
+  [data-reveal].in{opacity:1;transform:none}
+  [data-reveal="right"]{transform:translateX(40px)}
+  [data-reveal="right"].in{transform:none}
+
+  /* ---------- Qty row on card ---------- */
+  .qty-row{
+    margin-top:2px;display:flex;align-items:center;justify-content:space-between;
+    border:1px solid rgba(255,255,255,.14);
+  }
+  .qty-btn{
+    background:transparent;border:0;color:#fff;cursor:pointer;
+    width:36px;height:34px;font-size:18px;line-height:1;
+    display:grid;place-items:center;transition:background .15s ease;
+    font-family:"Barlow Condensed",sans-serif;font-weight:700;
+  }
+  .qty-btn:hover{background:rgba(255,255,255,.08)}
+  .qty-btn[data-action="plus"]{color:var(--blue)}
+  .qty-val{font-family:"Bebas Neue",sans-serif;font-size:17px;color:#fff;min-width:22px;text-align:center}
+  .prod-card[data-qty="0"] .qty-btn[data-action="minus"]{opacity:.25;pointer-events:none}
+  .prod-card.in-cart{border-color:var(--blue)}
+
+  /* ---------- Floating cart bar ---------- */
+  .cart-bar{
+    position:fixed;left:16px;bottom:16px;z-index:1900;
+    display:flex;align-items:center;gap:12px;
+    background:#111;border:1px solid rgba(255,255,255,.16);
+    padding:12px 18px;cursor:pointer;
+    box-shadow:0 10px 30px rgba(0,0,0,.5);
+    transform:translateY(140%);transition:transform .3s cubic-bezier(.2,.8,.2,1);
+  }
+  .cart-bar.show{transform:translateY(0)}
+  .cart-bar .ico{position:relative;width:22px;height:22px}
+  .cart-bar .ico svg{width:22px;height:22px;fill:var(--blue)}
+  .cart-bar .badge{
+    position:absolute;top:-8px;right:-10px;background:var(--red);color:#fff;
+    font-family:"Bebas Neue",sans-serif;font-size:12px;min-width:18px;height:18px;border-radius:50%;
+    display:grid;place-items:center;padding:0 3px;
+  }
+  .cart-bar .txt{display:flex;flex-direction:column;line-height:1.2}
+  .cart-bar .txt .lb{font-family:"Barlow Condensed",sans-serif;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute)}
+  .cart-bar .txt .tot{font-family:"Bebas Neue",sans-serif;font-size:19px;color:#fff}
+
+  /* ---------- Cart drawer ---------- */
+  .cart-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2100;
+    opacity:0;pointer-events:none;transition:opacity .25s ease;
+  }
+  .cart-overlay.show{opacity:1;pointer-events:auto}
+  .cart-drawer{
+    position:fixed;left:50%;bottom:0;width:min(480px, 100%);max-height:85vh;z-index:2101;
+    background:#0d0d0d;border:1px solid rgba(255,255,255,.12);border-bottom:0;
+    border-radius:18px 18px 0 0;
+    display:flex;flex-direction:column;
+    transform:translate(-50%,100%);transition:transform .3s cubic-bezier(.2,.8,.2,1);
+  }
+  .cart-drawer.show{transform:translate(-50%,0)}
+  .sheet-handle{width:40px;height:4px;background:rgba(255,255,255,.25);border-radius:2px;margin:12px auto 0;flex-shrink:0}
+  .cart-head{padding:16px 20px 22px;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+  .cart-head h3{font-family:"Bebas Neue",sans-serif;font-size:28px;color:#fff;letter-spacing:.02em}
+  .cart-close{background:transparent;border:1px solid rgba(255,255,255,.2);color:#fff;width:34px;height:34px;cursor:pointer;font-size:16px}
+  .cart-close:hover{border-color:var(--red);color:var(--red)}
+  .cart-items{flex:1;overflow-y:auto;padding:14px 20px}
+  .cart-empty{color:var(--mute);font-family:"Barlow Condensed",sans-serif;font-size:15px;padding:40px 0;text-align:center}
+  .cart-item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+  .cart-item img{width:60px;height:60px;object-fit:cover;flex-shrink:0;background:#000}
+  .cart-item .ci-info{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0}
+  .cart-item .ci-nm{font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:13px;text-transform:uppercase;color:#e9e6df;line-height:1.25}
+  .cart-item .ci-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .cart-item .ci-sub{font-family:"Bebas Neue",sans-serif;font-size:17px;color:var(--blue)}
+  .cart-item .ci-qty{display:flex;align-items:center;gap:2px;border:1px solid rgba(255,255,255,.14)}
+  .cart-item .ci-qty button{background:transparent;border:0;color:#fff;width:26px;height:26px;cursor:pointer;font-size:14px}
+  .cart-item .ci-qty button:hover{background:rgba(255,255,255,.08)}
+  .cart-item .ci-qty span{font-family:"Bebas Neue",sans-serif;font-size:14px;min-width:16px;text-align:center}
+  .cart-foot{padding:18px 20px 22px;border-top:1px solid rgba(255,255,255,.1);flex-shrink:0}
+  .cart-total-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
+  .cart-total-row .lb{font-family:"Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.18em;font-size:12px;color:var(--mute)}
+  .cart-total-row .val{font-family:"Bebas Neue",sans-serif;font-size:30px;color:#fff}
+  .cart-send{
+    width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
+    background:var(--red);color:#fff;border:0;padding:16px;cursor:pointer;
+    font-family:"Bebas Neue",sans-serif;font-size:19px;letter-spacing:.06em;
+    clip-path:polygon(3% 0,100% 0,97% 100%,0 100%);
+    transition:background .15s ease;
+  }
+  .cart-send:hover{background:#ff3a3a}
+  .cart-send svg{width:20px;height:20px;fill:#fff}
+  .cart-hint{margin-top:10px;color:var(--mute);font-size:12px;text-align:center;font-family:"Barlow Condensed",sans-serif;letter-spacing:.04em}
+
+  /* ---------- Modal de produto ---------- */
+  .prod-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:2200;
+    opacity:0;pointer-events:none;transition:opacity .25s ease;
+  }
+  .prod-overlay.show{opacity:1;pointer-events:auto}
+  .prod-modal{
+    position:fixed;left:50%;bottom:0;width:min(560px, 100%);max-height:88vh;z-index:2201;
+    background:#0d0d0d;border:1px solid rgba(255,255,255,.12);border-bottom:0;
+    border-radius:18px 18px 0 0;overflow-y:auto;
+    transform:translate(-50%,100%);transition:transform .3s cubic-bezier(.2,.8,.2,1);
+  }
+  .prod-modal.show{transform:translate(-50%,0)}
+  .prod-modal-close{
+    position:absolute;top:14px;right:14px;z-index:2;
+    background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.2);color:#fff;
+    width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:14px;
+  }
+  .prod-modal-close:hover{border-color:var(--red);color:var(--red)}
+  .pm-photo{aspect-ratio:1/1;max-height:320px;background:#000;overflow:hidden}
+  .pm-photo img{width:100%;height:100%;object-fit:cover}
+  .pm-body{padding:22px 22px 26px}
+  .pm-cat{font-family:"Barlow Condensed",sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.2em;font-size:11px;color:var(--mute)}
+  .pm-nm{font-family:"Bebas Neue",sans-serif;font-size:clamp(26px,5vw,34px);color:#fff;margin-top:8px;text-transform:uppercase;line-height:1.05}
+  .pm-pr{font-family:"Bebas Neue",sans-serif;font-size:26px;color:var(--blue);margin-top:10px;display:block}
+  .pm-qty-row{display:flex;align-items:center;gap:14px;margin-top:24px}
+  .qty-row.lg{flex:0 0 auto}
+  .qty-row.lg .qty-btn{width:44px;height:44px;font-size:20px}
+  .qty-row.lg .qty-val{font-size:20px;min-width:30px}
+  .pm-add{
+    flex:1;background:var(--red);color:#fff;border:0;padding:15px;cursor:pointer;
+    font-family:"Bebas Neue",sans-serif;font-size:18px;letter-spacing:.06em;
+    clip-path:polygon(4% 0,100% 0,96% 100%,0 100%);transition:background .15s ease;
+  }
+  .pm-add:hover{background:#ff3a3a}
+</style>
+</head>
+<body>
+
+<div class="demo-flag">DEMO — mesmo estilo do ICARAWAII CLUB, aplicado ao catálogo real do ThePeixe Produtos, fotos originais.</div>
+
+<!-- ============ NAV ============ -->
+<nav class="nav">
+  <a class="nav-logo" href="#top">
+    <div class="logo-circ">TP</div>
+    <span class="wm">
+      <b>THEPEIXE</b>
+      <span>Produtos</span>
+    </span>
+  </a>
+  <div class="nav-links">
+    <a href="#catalogo">Catálogo</a>
+    <a href="#contato">Contato</a>
+  </div>
+  <a class="wa-btn" href="https://wa.me/5585994354231" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.978-1.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
+    <span>WhatsApp</span>
+  </a>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="top">
+  <div class="ghost-word">PEIXE</div>
+
+  <svg class="splat splat-1" viewBox="0 0 400 400" aria-hidden="true">
+    <g fill="#4a9fd4" opacity=".5">
+      <ellipse cx="200" cy="200" rx="140" ry="70" transform="rotate(-18 200 200)"/>
+      <circle cx="80" cy="120" r="22"/>
+      <circle cx="340" cy="280" r="14"/>
+    </g>
+  </svg>
+  <svg class="splat splat-2" viewBox="0 0 400 400" aria-hidden="true">
+    <g fill="#e63030" opacity=".4">
+      <ellipse cx="200" cy="200" rx="120" ry="60" transform="rotate(12 200 200)"/>
+      <circle cx="60" cy="280" r="18"/>
+    </g>
+  </svg>
+
+  <div class="hero-grid">
+    <div class="hero-main">
+      <div class="hero-meta" data-reveal>
+        <span class="dot"></span>
+        <span class="small" style="color:#fff">Pedidos abertos</span>
+        <span class="small" style="color:var(--mute)">·</span>
+        <span class="small" style="color:var(--silver)">Caucaia · CE</span>
+        <span class="small" style="color:var(--mute)">·</span>
+        <span class="small" style="color:var(--silver)">Venda pra barbeiro</span>
+      </div>
+
+      <h1 data-reveal>
+        <span class="stroke">Produto de</span><br/>
+        barbearia<br/>
+        <span class="red">pra revenda.</span>
+      </h1>
+
+      <p class="tagline" data-reveal>
+        Lâmina, cera, óleo, máquina e químico. <b>O que sua barbearia usa toda semana</b>, direto no WhatsApp — sem sair da cadeira.
+      </p>
+
+      <div class="hero-ctas" data-reveal>
+        <a class="btn btn-primary" href="https://wa.me/5585994354231" target="_blank" rel="noopener">
+          Pedir no zap <span class="arrow">→</span>
+        </a>
+        <a class="btn btn-ghost" href="#catalogo">
+          Ver catálogo <span class="arrow">↓</span>
+        </a>
+      </div>
+    </div>
+
+    <aside class="hero-side" data-reveal="right">
+      <div class="logo-card">
+        <div class="tape"></div>
+        <div class="tape r"></div>
+        <img src="assets/produtos/17-m-quina-kemel.jpg" alt="Máquina Kemel" />
+        <span class="corner">PRODUTOS · CE</span>
+      </div>
+
+      <div class="info-strip">
+        <div class="item">
+          <span class="k">Catálogo</span>
+          <span class="v">Linha completa</span>
+        </div>
+        <div class="item">
+          <span class="k">Entrega</span>
+          <span class="v">Caucaia &amp; região</span>
+        </div>
+        <div class="item">
+          <span class="k">Pedidos</span>
+          <span class="v">Direto no WhatsApp</span>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ MARQUEE ============ -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>Reposição rápida</span><span>Catálogo online</span><span>Direto no zap</span><span>Caucaia · CE</span>
+    <span>Reposição rápida</span><span>Catálogo online</span><span>Direto no zap</span><span>Caucaia · CE</span>
+  </div>
+</div>
+
+<!-- ============ CATÁLOGO ============ -->
+<section class="catalog" id="catalogo">
+  <div class="ghost-word">CATÁLOGO</div>
+  <div class="wrap" style="position:relative;z-index:2">
+
+    <div class="section-head">
+      <div>
+        <div class="lbl"><span class="small">CATÁLOGO</span></div>
+        <h2 data-reveal>Lâmina, cera<em><br/>e ferramenta.</em></h2>
+      </div>
+    </div>
+
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <input type="text" id="searchInput" placeholder="Buscar produto..." autocomplete="off" />
+    </div>
+
+    <div class="cat-nav" id="catNav"></div>
+
+    <div id="catalogRoot">
+      <p class="small" style="color:var(--mute)">Carregando catálogo…</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="cta-band" id="contato">
+  <div class="ghost-word">FALA AÍ</div>
+  <div class="cta-inner">
+    <div class="small" data-reveal>Direto no WhatsApp · resposta rápida</div>
+    <h2 data-reveal>
+      <span class="stroke">Pede</span><br/>
+      <span class="red">no zap.</span>
+    </h2>
+    <p class="sub" data-reveal>Manda a lista do que precisa, confirma o total e combina a entrega ou retirada.</p>
+    <a class="wa-big" href="https://wa.me/5585994354231" target="_blank" rel="noopener" data-reveal>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.978-1.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
+      <span>Chamar no WhatsApp</span>
+    </a>
+    <div class="phone">+55 85 9 9435-4231</div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div>
+      <div class="brand">
+        <div class="logo-circ">TP</div>
+        <div>
+          <div class="t">THEPEIXE PRODUTOS</div>
+          <span class="s">Caucaia · Ceará · Brasil</span>
+        </div>
+      </div>
+      <p style="margin-top:20px;color:#bdbab2;max-width:380px;line-height:1.45;font-size:16px;font-weight:500">
+        Insumos de barbearia pra reposição: lâmina, cera, óleo, química e ferramenta. Catálogo completo, pedido direto no WhatsApp.
+      </p>
+    </div>
+
+    <div>
+      <h4>Entrega</h4>
+      <ul>
+        <li><b>Região</b><br/>Caucaia e entorno</li>
+        <li style="margin-top:10px"><b>Retirada</b><br/>Combinar no WhatsApp</li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>Contato</h4>
+      <ul>
+        <li><b>WhatsApp</b><br/>+55 85 9 9435-4231</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wrap bottom">
+    <span>© 2026 ThePeixe Produtos</span>
+    <span><span class="red">●</span> Feito em Caucaia</span>
+    <span>Catálogo real</span>
+  </div>
+</footer>
+
+<!-- ============ CARRINHO ============ -->
+<button class="cart-bar" id="cartBar" type="button">
+  <span class="ico">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h-2l-1 2H2v2h2l3.6 7.59-1.35 2.44C5.52 18.37 6.48 20 8 20h12v-2H8l1.1-2h7.45c.75 0 1.41-.41 1.75-1.03L21.7 8H6.21l-.94-2H7V4zm0 15c-1.1 0-1.99.9-1.99 2S5.9 23 7 23s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+    <span class="badge" id="cartBadge">0</span>
+  </span>
+  <span class="txt">
+    <span class="lb">Pedido</span>
+    <span class="tot" id="cartBarTotal">R$ 0,00</span>
+  </span>
+</button>
+
+<div class="cart-overlay" id="cartOverlay"></div>
+<aside class="cart-drawer" id="cartDrawer">
+  <div class="sheet-handle"></div>
+  <div class="cart-head">
+    <h3>Seu pedido</h3>
+    <button class="cart-close" id="cartClose" type="button" aria-label="Fechar">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty">Ainda não tem nada aqui. Adiciona produtos no catálogo.</div>
+  </div>
+  <div class="cart-foot">
+    <div class="cart-total-row">
+      <span class="lb">Total</span>
+      <span class="val" id="cartTotal">R$ 0,00</span>
+    </div>
+    <button class="cart-send" id="cartSend" type="button">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.978-1.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
+      <span>Enviar pedido no WhatsApp</span>
+    </button>
+    <div class="cart-hint">Abre o WhatsApp com a lista pronta pra confirmar com o ThePeixe.</div>
+  </div>
+</aside>
+
+<!-- ============ MODAL DE PRODUTO ============ -->
+<div class="prod-overlay" id="prodOverlay"></div>
+<div class="prod-modal" id="prodModal">
+  <div class="sheet-handle"></div>
+  <button class="prod-modal-close" id="prodModalClose" type="button" aria-label="Fechar">✕</button>
+  <div class="pm-photo" id="pmPhoto"></div>
+  <div class="pm-body">
+    <span class="pm-cat" id="pmCat"></span>
+    <h3 class="pm-nm" id="pmNm"></h3>
+    <span class="pm-pr" id="pmPr"></span>
+    <div class="pm-qty-row">
+      <div class="qty-row lg" id="pmQtyRow">
+        <button class="qty-btn" type="button" data-action="minus" aria-label="Diminuir quantidade">−</button>
+        <span class="qty-val" id="pmQtyVal">0</span>
+        <button class="qty-btn" type="button" data-action="plus" aria-label="Adicionar ao pedido">+</button>
+      </div>
+      <button class="pm-add" id="pmAdd" type="button">Adicionar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ==========================================================
+  // CATÁLOGO — vem de uma planilha Google publicada como CSV.
+  // Pra ligar: publique a planilha (Arquivo > Compartilhar >
+  // Publicar na web > formato CSV) e cole o link abaixo.
+  // Enquanto estiver vazio, usa a lista fixa (FALLBACK_PRODUCTS).
+  // Colunas esperadas: categoria, produto, preco, imagem
+  // ==========================================================
+  const SHEET_CSV_URL = ""; // <- cole aqui o link "Publicar na web" em CSV
+
+  const FALLBACK_PRODUCTS = [
+    {categoria:"Lâminas & cartelas", produto:"Cartelas de Derby", preco:27.00, imagem:"04-cartelas-de-derby.jpg"},
+    {categoria:"Lâminas & cartelas", produto:"Cartelas de Lord Super", preco:20.00, imagem:"05-cartelas-de-lord-super.jpg"},
+    {categoria:"Lâminas & cartelas", produto:"Cartelas de Wilkson", preco:25.00, imagem:"06-cartelas-de-wilkson.jpg"},
+    {categoria:"Ceras & finalização", produto:"Cera Modeladora Matte 77 For Man", preco:8.00, imagem:"07-cera-modeladora-matte-77-for-man.jpg"},
+    {categoria:"Ceras & finalização", produto:"Cera Modeladora Black 70g Sete Sete", preco:8.00, imagem:"08-cera-modeladora-black-70g-sete-sete-for-man.jpg"},
+    {categoria:"Ceras & finalização", produto:"Cera Modeladora Caramelo 70g Sete Sete", preco:8.00, imagem:"09-cera-modeladora-caramelo-70g-sete-sete-for-man.jpg"},
+    {categoria:"Ceras & finalização", produto:"Cera Modeladora Coffee 70g Sete Sete", preco:8.00, imagem:"10-cera-modeladora-coffe-70g-sete-sete-for.jpg"},
+    {categoria:"Ceras & finalização", produto:"Cera Modeladora Extra Forte 70g Sete Sete", preco:8.00, imagem:"11-cera-modeladora-extra-forte-70g-sete-set-for-man.jpg"},
+    {categoria:"Barba & cabelo", produto:"Balm Big Barber p/ Barba (a partir de 6 un.)", preco:19.50, imagem:"01-balm-big-barber-para-barba-a-partir-de-6-unidades.jpg"},
+    {categoria:"Barba & cabelo", produto:"Óleo para Barba 77 For Man (a partir de 6 un.)", preco:17.50, imagem:"18-leo-para-barba-77-for-man-a-partir-de-6-unidades.jpg"},
+    {categoria:"Barba & cabelo", produto:"Leave-in 77 For Man (a partir de 6 un.)", preco:19.00, imagem:"16-leave-in-77-for-man-a-partir-de-6-unidades.jpg"},
+    {categoria:"Ferramentas & equipamentos", produto:"Máquina Kemel", preco:60.00, imagem:"17-m-quina-kemel.jpg"},
+    {categoria:"Ferramentas & equipamentos", produto:"Óleo para Máquinas", preco:12.00, imagem:"19-leo-para-m-quinas.jpg"},
+    {categoria:"Ferramentas & equipamentos", produto:"Gola Higiênica", preco:35.00, imagem:"15-gola-higi-nica.jpg"},
+    {categoria:"Ferramentas & equipamentos", produto:"Cumbuca + Pincel Santa Clara", preco:15.00, imagem:"12-cumbuca-pincel-santa-clara.jpg"},
+    {categoria:"Ferramentas & equipamentos", produto:"Pente Umi Carbono", preco:18.00, imagem:"21-pente-umi-carbono.jpg"},
+    {categoria:"Ferramentas & equipamentos", produto:"Pente Umi Carbono com Régua", preco:16.00, imagem:"22-pente-umi-carbono-com-r-gua.jpg"},
+    {categoria:"Ferramentas & equipamentos", produto:"Borrifador Gatilho", preco:30.00, imagem:"02-borrifado-gatilho.jpg"},
+    {categoria:"Ferramentas & equipamentos", produto:"Borrifador Jato Névoa", preco:20.00, imagem:"03-borrifador-jato-n-voa.jpg"},
+    {categoria:"Ferramentas & equipamentos", produto:"Escovinha para Disfarce", preco:12.00, imagem:"13-escovinha-para-disfarce.jpg"},
+    {categoria:"Ferramentas & equipamentos", produto:"Espanador Cabo Curto", preco:25.00, imagem:"14-espanador-cabo-curto.jpg"},
+    {categoria:"Ferramentas & equipamentos", produto:"OX Yama", preco:27.00, imagem:"20-ox-yama.jpg"},
+    {categoria:"Química", produto:"Pó Descolorante Yama 9 Tons Platinado", preco:37.00, imagem:"23-p-descolorante-yama-9-tons-platinado.jpg"},
+    {categoria:"Química", produto:"Pó Descolorante Yama 8 Tons", preco:35.00, imagem:"24-p-descolorante-yama-8-tons.jpg"}
+  ];
+
+  function parseCSVLine(line){
+    const out = []; let cur = ''; let inQuotes = false;
+    for(let i=0;i<line.length;i++){
+      const c = line[i];
+      if(c === '"'){
+        if(inQuotes && line[i+1] === '"'){ cur += '"'; i++; }
+        else inQuotes = !inQuotes;
+      } else if(c === ',' && !inQuotes){
+        out.push(cur); cur = '';
+      } else cur += c;
+    }
+    out.push(cur);
+    return out;
+  }
+
+  function parseCSV(text){
+    const lines = text.split(/\r?\n/).filter(l => l.trim().length);
+    if(lines.length < 2) return [];
+    const headers = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
+    const rows = [];
+    for(let i=1;i<lines.length;i++){
+      const cells = parseCSVLine(lines[i]);
+      const row = {};
+      headers.forEach((h, idx) => row[h] = (cells[idx] || '').trim());
+      const preco = parseFloat(String(row.preco || '0').replace(',', '.'));
+      if(!row.produto || isNaN(preco)) continue;
+      rows.push({categoria: row.categoria || 'Produtos', produto: row.produto, preco, imagem: row.imagem || ''});
+    }
+    return rows;
+  }
+
+  function resolveImg(imagem){
+    if(!imagem) return '';
+    if(/^https?:\/\//i.test(imagem)) return imagem;
+    return 'assets/produtos/' + imagem;
+  }
+
+  function slugify(str){
+    return str.toLowerCase()
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  }
+
+  let ALL_PRODUCTS = [];
+  let currentModalProduct = null;
+
+  function renderCatalog(products){
+    ALL_PRODUCTS = products;
+    const root = document.getElementById('catalogRoot');
+    if(!products.length){
+      root.innerHTML = '<p class="small" style="color:var(--mute)">Nenhum produto cadastrado ainda.</p>';
+      return;
+    }
+    const groups = new Map();
+    products.forEach(p => {
+      if(!groups.has(p.categoria)) groups.set(p.categoria, []);
+      groups.get(p.categoria).push(p);
+    });
+
+    let html = '';
+    let idx = 0;
+    groups.forEach((items, categoria) => {
+      idx++;
+      const catId = slugify(categoria);
+      html += `<div class="cat-group" id="${catId}">
+        <div class="cat-head"><span class="idx">${String(idx).padStart(2,'0')}</span><h3>${categoria}</h3><span class="n">${items.length} ${items.length === 1 ? 'item' : 'itens'}</span></div>
+        <div class="prod-grid">`;
+      items.forEach(p => {
+        const priceTxt = 'R$ ' + p.preco.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+        const nameAttr = p.produto.replace(/"/g, '&quot;');
+        const img = resolveImg(p.imagem);
+        html += `<article class="prod-card" data-name="${nameAttr}" data-price="${p.preco}" data-qty="0">
+          <div class="ph">${img
+            ? `<img src="${img}" alt="${p.produto}" loading="lazy" onerror="this.closest('.ph').innerHTML='<div class=\\'ph-fallback\\'>${p.produto.replace(/'/g, "&#39;")}</div>'">`
+            : `<div class="ph-fallback">${p.produto}</div>`}</div>
+          <div class="info">
+            <span class="nm">${p.produto}</span>
+            <span class="pr">${priceTxt}</span>
+            <div class="qty-row">
+              <button class="qty-btn" type="button" data-action="minus" aria-label="Diminuir quantidade">−</button>
+              <span class="qty-val">0</span>
+              <button class="qty-btn" type="button" data-action="plus" aria-label="Adicionar ao pedido">+</button>
+            </div>
+          </div>
+        </article>`;
+      });
+      html += `</div></div>`;
+    });
+    root.innerHTML = html;
+
+    document.querySelectorAll('.prod-card').forEach(card => {
+      const name = card.dataset.name;
+      card.querySelector('[data-action="minus"]').addEventListener('click', () => changeQty(name, -1));
+      card.querySelector('[data-action="plus"]').addEventListener('click', () => changeQty(name, 1));
+      card.querySelector('.ph').addEventListener('click', () => openProductModal(name));
+      card.querySelector('.nm').addEventListener('click', () => openProductModal(name));
+    });
+
+    setupCatNav();
+    applySearchFilter();
+  }
+
+  // ---------- Categorias fixas (chips + scroll-spy) ----------
+  function setupCatNav(){
+    const groups = Array.from(document.querySelectorAll('.cat-group'));
+    const catNav = document.getElementById('catNav');
+    if(!groups.length){ catNav.innerHTML = ''; return; }
+
+    catNav.innerHTML = groups.map(g =>
+      `<button class="cat-chip" type="button" data-target="${g.id}">${g.querySelector('h3').textContent}</button>`
+    ).join('');
+
+    catNav.querySelectorAll('.cat-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const target = document.getElementById(chip.dataset.target);
+        if(!target) return;
+        const navH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 78;
+        const y = target.getBoundingClientRect().top + window.scrollY - navH - catNav.offsetHeight - 10;
+        window.scrollTo({top: y, behavior: 'smooth'});
+      });
+    });
+
+    const spy = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if(!e.isIntersecting) return;
+        const chip = catNav.querySelector(`.cat-chip[data-target="${e.target.id}"]`);
+        if(!chip) return;
+        catNav.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        chip.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+      });
+    }, {rootMargin:'-40% 0px -50% 0px', threshold:0});
+    groups.forEach(g => spy.observe(g));
+  }
+
+  // ---------- Busca ----------
+  function applySearchFilter(){
+    const input = document.getElementById('searchInput');
+    const q = input ? input.value.trim().toLowerCase() : '';
+    document.querySelectorAll('.cat-group').forEach(group => {
+      let visible = 0;
+      group.querySelectorAll('.prod-card').forEach(card => {
+        const match = !q || card.dataset.name.toLowerCase().includes(q);
+        card.style.display = match ? '' : 'none';
+        if(match) visible++;
+      });
+      group.style.display = visible ? '' : 'none';
+    });
+  }
+
+  document.getElementById('searchInput').addEventListener('input', applySearchFilter);
+
+  // ---------- Modal de produto ----------
+  const prodOverlay = document.getElementById('prodOverlay');
+  const prodModal = document.getElementById('prodModal');
+  const prodModalClose = document.getElementById('prodModalClose');
+  const pmQtyRow = document.getElementById('pmQtyRow');
+  const pmAdd = document.getElementById('pmAdd');
+
+  function openProductModal(name){
+    const p = ALL_PRODUCTS.find(pr => pr.produto === name);
+    if(!p) return;
+    currentModalProduct = name;
+    const img = resolveImg(p.imagem);
+    document.getElementById('pmPhoto').innerHTML = img
+      ? `<img src="${img}" alt="${p.produto}" onerror="this.parentElement.innerHTML='<div class=\\'ph-fallback\\'>${p.produto.replace(/'/g, "&#39;")}</div>'">`
+      : `<div class="ph-fallback">${p.produto}</div>`;
+    document.getElementById('pmCat').textContent = p.categoria;
+    document.getElementById('pmNm').textContent = p.produto;
+    document.getElementById('pmPr').textContent = 'R$ ' + p.preco.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+    document.getElementById('pmQtyVal').textContent = cart.has(name) ? cart.get(name).qty : 0;
+    prodOverlay.classList.add('show');
+    prodModal.classList.add('show');
+  }
+
+  function closeProductModal(){
+    prodOverlay.classList.remove('show');
+    prodModal.classList.remove('show');
+    currentModalProduct = null;
+  }
+
+  prodModalClose.addEventListener('click', closeProductModal);
+  prodOverlay.addEventListener('click', closeProductModal);
+  pmQtyRow.querySelector('[data-action="minus"]').addEventListener('click', () => currentModalProduct && changeQty(currentModalProduct, -1));
+  pmQtyRow.querySelector('[data-action="plus"]').addEventListener('click', () => currentModalProduct && changeQty(currentModalProduct, 1));
+  pmAdd.addEventListener('click', () => {
+    if(currentModalProduct && !cart.has(currentModalProduct)){
+      changeQty(currentModalProduct, 1);
+    }
+    closeProductModal();
+  });
+
+  async function loadProducts(){
+    if(SHEET_CSV_URL){
+      try{
+        const res = await fetch(SHEET_CSV_URL, {cache: 'no-store'});
+        if(!res.ok) throw new Error('CSV indisponível');
+        const text = await res.text();
+        const parsed = parseCSV(text);
+        if(parsed.length) return parsed;
+      } catch(err){
+        console.warn('Falha ao carregar planilha, usando lista fixa.', err);
+      }
+    }
+    return FALLBACK_PRODUCTS;
+  }
+
+  loadProducts().then(renderCatalog);
+
+  // ---------- Altura real do nav (pro sticky dos chips) ----------
+  function setNavHeight(){
+    const nav = document.querySelector('.nav');
+    if(nav) document.documentElement.style.setProperty('--nav-h', nav.offsetHeight + 'px');
+  }
+  setNavHeight();
+  window.addEventListener('resize', setNavHeight);
+
+  // ---------- Scroll reveal ----------
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:.12, rootMargin:"0px 0px -8% 0px"});
+  document.querySelectorAll('[data-reveal]').forEach(el=>io.observe(el));
+
+  // ---------- Carrinho ----------
+  const WHATSAPP_NUMBER = "5585994354231";
+  const cart = new Map(); // name -> {qty, price, img}
+  const fmt = v => v.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+
+  const cartBar = document.getElementById('cartBar');
+  const cartBadge = document.getElementById('cartBadge');
+  const cartBarTotal = document.getElementById('cartBarTotal');
+  const cartOverlay = document.getElementById('cartOverlay');
+  const cartDrawer = document.getElementById('cartDrawer');
+  const cartClose = document.getElementById('cartClose');
+  const cartItemsEl = document.getElementById('cartItems');
+  const cartTotalEl = document.getElementById('cartTotal');
+  const cartSend = document.getElementById('cartSend');
+
+  function cartTotals(){
+    let qty = 0, total = 0;
+    cart.forEach(item => { qty += item.qty; total += item.qty * item.price; });
+    return {qty, total};
+  }
+
+  function syncCardQty(name, qty){
+    document.querySelectorAll(`.prod-card[data-name="${CSS.escape(name)}"]`).forEach(card => {
+      card.dataset.qty = qty;
+      card.classList.toggle('in-cart', qty > 0);
+      const val = card.querySelector('.qty-val');
+      if(val) val.textContent = qty;
+    });
+    if(currentModalProduct === name){
+      const pv = document.getElementById('pmQtyVal');
+      if(pv) pv.textContent = qty;
+    }
+  }
+
+  function renderCartBar(){
+    const {qty, total} = cartTotals();
+    cartBadge.textContent = qty;
+    cartBarTotal.textContent = fmt(total);
+    cartBar.classList.toggle('show', qty > 0);
+  }
+
+  function renderCartDrawer(){
+    if(cart.size === 0){
+      cartItemsEl.innerHTML = '<div class="cart-empty">Ainda não tem nada aqui. Adiciona produtos no catálogo.</div>';
+    } else {
+      cartItemsEl.innerHTML = '';
+      cart.forEach((item, name) => {
+        const row = document.createElement('div');
+        row.className = 'cart-item';
+        row.innerHTML = `
+          <img src="${item.img}" alt="${name}">
+          <div class="ci-info">
+            <span class="ci-nm">${name}</span>
+            <div class="ci-row">
+              <div class="ci-qty">
+                <button type="button" data-action="minus">−</button>
+                <span>${item.qty}</span>
+                <button type="button" data-action="plus">+</button>
+              </div>
+              <span class="ci-sub">${fmt(item.qty * item.price)}</span>
+            </div>
+          </div>`;
+        row.querySelector('[data-action="minus"]').addEventListener('click', () => changeQty(name, -1));
+        row.querySelector('[data-action="plus"]').addEventListener('click', () => changeQty(name, 1));
+        cartItemsEl.appendChild(row);
+      });
+    }
+    const {total} = cartTotals();
+    cartTotalEl.textContent = fmt(total);
+  }
+
+  function changeQty(name, delta){
+    const card = document.querySelector(`.prod-card[data-name="${CSS.escape(name)}"]`);
+    const price = card ? parseFloat(card.dataset.price) : (cart.get(name) ? cart.get(name).price : 0);
+    const img = card ? card.querySelector('img').getAttribute('src') : (cart.get(name) ? cart.get(name).img : '');
+    const current = cart.has(name) ? cart.get(name).qty : 0;
+    const next = Math.max(0, current + delta);
+    if(next === 0){
+      cart.delete(name);
+    } else {
+      cart.set(name, {qty: next, price, img});
+    }
+    syncCardQty(name, next);
+    renderCartBar();
+    renderCartDrawer();
+  }
+
+  // (cards são criados dinamicamente em renderCatalog(), que já liga os botões +/- ali mesmo)
+
+  function openCart(){
+    cartOverlay.classList.add('show');
+    cartDrawer.classList.add('show');
+  }
+  function closeCart(){
+    cartOverlay.classList.remove('show');
+    cartDrawer.classList.remove('show');
+  }
+  cartBar.addEventListener('click', openCart);
+  cartClose.addEventListener('click', closeCart);
+  cartOverlay.addEventListener('click', closeCart);
+
+  cartSend.addEventListener('click', () => {
+    if(cart.size === 0) return;
+    let lines = ['Olá! Quero fazer um pedido:', ''];
+    cart.forEach((item, name) => {
+      lines.push(`- ${item.qty}x ${name} — ${fmt(item.qty * item.price)}`);
+    });
+    const {total} = cartTotals();
+    lines.push('', `Total: ${fmt(total)}`);
+    const msg = encodeURIComponent(lines.join('\n'));
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+  });
+</script>
+</body>
+</html>
