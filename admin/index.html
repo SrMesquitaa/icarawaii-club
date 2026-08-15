@@ -44,9 +44,9 @@
   .cat-title:first-child{margin-top:0}
   .prod-row{display:flex;align-items:center;gap:14px;background:#111;border:1px solid rgba(255,255,255,.08);padding:10px;margin-bottom:8px}
   .prod-row.off{opacity:.45}
-  .prod-row .th{width:52px;height:52px;flex-shrink:0;background:#000;overflow:hidden}
+  .prod-row .th{width:52px;height:52px;flex-shrink:0;background:#000;overflow:hidden;cursor:pointer}
   .prod-row .th img{width:100%;height:100%;object-fit:cover}
-  .prod-row .nm{flex:1;min-width:0}
+  .prod-row .nm{flex:1;min-width:0;cursor:pointer}
   .prod-row .nm b{display:block;font-size:14px;font-weight:600;color:#e9e6df}
   .prod-row .nm span{font-family:"Bebas Neue",sans-serif;font-size:17px;color:var(--blue)}
   .prod-row .actions{display:flex;gap:6px}
@@ -113,7 +113,7 @@
 <div class="sheet" id="sheet">
   <div class="sheet-handle"></div>
   <div class="sheet-body">
-    <h2>Novo produto</h2>
+    <h2 id="sheetTitle">Novo produto</h2>
 
     <label class="photo-pick" id="photoPick">
       <svg viewBox="0 0 24 24"><path d="M9.4 10.5l4.77 6.9L17.1 13l4.9 7H2l7.4-9.5zM5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2zm12.5 6a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z"/></svg>
@@ -213,8 +213,11 @@
     renderList(error ? [] : data);
   }
 
+  let ALL_ADMIN_PRODUCTS = [];
+
   function renderList(data){
     const root = document.getElementById('listRoot');
+    ALL_ADMIN_PRODUCTS = data || [];
     if(!data || !data.length){
       root.innerHTML = '<div class="empty">Nenhum produto ainda. Toca no + pra cadastrar o primeiro.</div>';
       return;
@@ -230,8 +233,8 @@
       html += `<div class="cat-title">${categoria}</div>`;
       items.forEach(p => {
         html += `<div class="prod-row ${p.disponivel ? '' : 'off'}" data-id="${p.id}">
-          <div class="th">${p.imagem_url ? `<img src="${p.imagem_url}" alt="">` : ''}</div>
-          <div class="nm"><b>${p.produto}</b><span>${fmt(p.preco)}</span></div>
+          <div class="th" data-action="edit">${p.imagem_url ? `<img src="${p.imagem_url}" alt="">` : ''}</div>
+          <div class="nm" data-action="edit"><b>${p.produto}</b><span>${fmt(p.preco)}</span></div>
           <div class="actions">
             <button class="icon-btn" data-action="toggle" title="${p.disponivel ? 'Marcar indisponível' : 'Marcar disponível'}">${p.disponivel ? '👁' : '🚫'}</button>
             <button class="icon-btn danger" data-action="delete" title="Apagar">✕</button>
@@ -243,6 +246,10 @@
 
     root.querySelectorAll('.prod-row').forEach(row => {
       const id = row.dataset.id;
+      row.querySelectorAll('[data-action="edit"]').forEach(el => el.addEventListener('click', () => {
+        const p = ALL_ADMIN_PRODUCTS.find(pr => String(pr.id) === String(id));
+        if(p) openSheet(p);
+      }));
       row.querySelector('[data-action="toggle"]').addEventListener('click', () => toggleDisponivel(row, id));
       row.querySelector('[data-action="delete"]').addEventListener('click', () => deleteProduto(id));
     });
@@ -273,14 +280,28 @@
   const photoPickTxt = document.getElementById('photoPickTxt');
   const saveErr = document.getElementById('saveErr');
 
-  function openSheet(){
+  let editingId = null;
+  let editingImagemUrl = '';
+
+  function openSheet(product){
+    editingId = product ? product.id : null;
+    editingImagemUrl = product ? (product.imagem_url || '') : '';
+    document.getElementById('sheetTitle').textContent = product ? 'Editar produto' : 'Novo produto';
     document.getElementById('fCategoriaNova').value = '';
-    document.getElementById('fProduto').value = '';
-    document.getElementById('fPreco').value = '';
+    document.getElementById('fProduto').value = product ? product.produto : '';
+    document.getElementById('fPreco').value = product ? product.preco : '';
+    document.getElementById('fCategoria').value = product ? product.categoria : '';
     photoInput.value = '';
     selectedFile = null;
-    photoPickTxt.textContent = 'Toque pra escolher a foto';
     photoPick.querySelector('img')?.remove();
+    if(editingImagemUrl){
+      const img = document.createElement('img');
+      img.src = editingImagemUrl;
+      photoPickTxt.textContent = '';
+      photoPick.appendChild(img);
+    } else {
+      photoPickTxt.textContent = 'Toque pra escolher a foto';
+    }
     saveErr.textContent = '';
     sheetOverlay.classList.add('show');
     sheet.classList.add('show');
@@ -289,11 +310,10 @@
     sheetOverlay.classList.remove('show');
     sheet.classList.remove('show');
   }
-  document.getElementById('fabAdd').addEventListener('click', openSheet);
+  document.getElementById('fabAdd').addEventListener('click', () => openSheet());
   document.getElementById('cancelBtn').addEventListener('click', closeSheet);
   sheetOverlay.addEventListener('click', closeSheet);
 
-  photoPick.addEventListener('click', () => photoInput.click());
   photoInput.addEventListener('change', () => {
     const file = photoInput.files[0];
     if(!file) return;
@@ -319,7 +339,7 @@
 
     sheet.classList.add('saving');
     try{
-      let imagem_url = '';
+      let imagem_url = editingId ? editingImagemUrl : '';
       if(selectedFile){
         const ext = selectedFile.name.split('.').pop() || 'jpg';
         const path = `${LOJA}/${Date.now()}-${slugify(produto)}.${ext}`;
@@ -327,8 +347,13 @@
         if(upErr) throw upErr;
         imagem_url = sb.storage.from('produtos').getPublicUrl(path).data.publicUrl;
       }
-      const { error } = await sb.from('produtos').insert({ loja: LOJA, categoria, produto, preco, imagem_url, disponivel: true });
-      if(error) throw error;
+      if(editingId){
+        const { error } = await sb.from('produtos').update({ categoria, produto, preco, imagem_url }).eq('id', editingId);
+        if(error) throw error;
+      } else {
+        const { error } = await sb.from('produtos').insert({ loja: LOJA, categoria, produto, preco, imagem_url, disponivel: true });
+        if(error) throw error;
+      }
       closeSheet();
       await loadList();
     } catch(err){
