@@ -501,9 +501,9 @@
       </div>
 
       <h1 data-reveal>
-        <span class="stroke">Produto de</span><br/>
-        barbearia<br/>
-        <span class="red">pra revenda.</span>
+        <span class="stroke">Produtos</span><br/>
+        para sua<br/>
+        <span class="red">barbearia.</span>
       </h1>
 
       <p class="tagline" data-reveal>
@@ -695,13 +695,14 @@
 
 <script>
   // ==========================================================
-  // CATÁLOGO — vem de uma planilha Google publicada como CSV.
-  // Pra ligar: publique a planilha (Arquivo > Compartilhar >
-  // Publicar na web > formato CSV) e cole o link abaixo.
-  // Enquanto estiver vazio, usa a lista fixa (FALLBACK_PRODUCTS).
-  // Colunas esperadas: categoria, produto, preco, imagem
+  // CATÁLOGO — vem da tabela "produtos" no Supabase, filtrado
+  // pela loja "thepeixe". Se a busca falhar por qualquer motivo,
+  // cai na lista fixa (FALLBACK_PRODUCTS) — o site nunca fica
+  // "quebrado" mesmo se o Supabase estiver fora do ar.
   // ==========================================================
-  const SHEET_CSV_URL = ""; // <- cole aqui o link "Publicar na web" em CSV
+  const SUPABASE_URL = "https://rrpsdkofisvgmvcqoeun.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_9HoTh1s-K1xtB4D2iAsI6Q_2sqbo0F9";
+  const LOJA = "thepeixe";
 
   const FALLBACK_PRODUCTS = [
     {categoria:"Lâminas & cartelas", produto:"Cartelas de Derby", preco:27.00, imagem:"04-cartelas-de-derby.jpg"},
@@ -729,37 +730,6 @@
     {categoria:"Química", produto:"Pó Descolorante Yama 9 Tons Platinado", preco:37.00, imagem:"23-p-descolorante-yama-9-tons-platinado.jpg"},
     {categoria:"Química", produto:"Pó Descolorante Yama 8 Tons", preco:35.00, imagem:"24-p-descolorante-yama-8-tons.jpg"}
   ];
-
-  function parseCSVLine(line){
-    const out = []; let cur = ''; let inQuotes = false;
-    for(let i=0;i<line.length;i++){
-      const c = line[i];
-      if(c === '"'){
-        if(inQuotes && line[i+1] === '"'){ cur += '"'; i++; }
-        else inQuotes = !inQuotes;
-      } else if(c === ',' && !inQuotes){
-        out.push(cur); cur = '';
-      } else cur += c;
-    }
-    out.push(cur);
-    return out;
-  }
-
-  function parseCSV(text){
-    const lines = text.split(/\r?\n/).filter(l => l.trim().length);
-    if(lines.length < 2) return [];
-    const headers = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
-    const rows = [];
-    for(let i=1;i<lines.length;i++){
-      const cells = parseCSVLine(lines[i]);
-      const row = {};
-      headers.forEach((h, idx) => row[h] = (cells[idx] || '').trim());
-      const preco = parseFloat(String(row.preco || '0').replace(',', '.'));
-      if(!row.produto || isNaN(preco)) continue;
-      rows.push({categoria: row.categoria || 'Produtos', produto: row.produto, preco, imagem: row.imagem || ''});
-    }
-    return rows;
-  }
 
   function resolveImg(imagem){
     if(!imagem) return '';
@@ -929,16 +899,19 @@
   });
 
   async function loadProducts(){
-    if(SHEET_CSV_URL){
-      try{
-        const res = await fetch(SHEET_CSV_URL, {cache: 'no-store'});
-        if(!res.ok) throw new Error('CSV indisponível');
-        const text = await res.text();
-        const parsed = parseCSV(text);
-        if(parsed.length) return parsed;
-      } catch(err){
-        console.warn('Falha ao carregar planilha, usando lista fixa.', err);
+    try{
+      const url = `${SUPABASE_URL}/rest/v1/produtos?loja=eq.${LOJA}&disponivel=eq.true&select=categoria,produto,preco,imagem_url&order=id.asc`;
+      const res = await fetch(url, {
+        headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` },
+        cache: 'no-store'
+      });
+      if(!res.ok) throw new Error('Supabase indisponível');
+      const rows = await res.json();
+      if(rows.length){
+        return rows.map(r => ({categoria: r.categoria, produto: r.produto, preco: Number(r.preco), imagem: r.imagem_url || ''}));
       }
+    } catch(err){
+      console.warn('Falha ao carregar do Supabase, usando lista fixa.', err);
     }
     return FALLBACK_PRODUCTS;
   }

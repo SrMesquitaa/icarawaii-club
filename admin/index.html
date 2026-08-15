@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Painel de Produtos</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{--bg:#0a0a0a;--ink:#f2efe8;--silver:#d4d4d4;--mute:#7a7a7a;--red:#e63030;--blue:#4a9fd4}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);font-family:"Barlow Condensed",sans-serif;min-height:100vh}
+  h1,h2,h3{font-family:"Bebas Neue",sans-serif;letter-spacing:.03em;text-transform:uppercase}
+  button{font-family:inherit;cursor:pointer}
+  input,select{font-family:inherit}
+
+  /* ---------- Login ---------- */
+  #loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .login-card{width:100%;max-width:360px}
+  .login-card h1{font-size:36px;margin-bottom:6px}
+  .login-card p{color:var(--mute);font-size:14px;margin-bottom:26px}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--mute);margin-bottom:6px}
+  .field input{width:100%;background:#111;border:1px solid rgba(255,255,255,.16);color:#fff;padding:13px 14px;font-size:15px;outline:none}
+  .field input:focus{border-color:var(--blue)}
+  .btn{display:block;width:100%;background:var(--red);color:#fff;border:0;padding:14px;font-family:"Bebas Neue",sans-serif;font-size:18px;letter-spacing:.06em;margin-top:6px}
+  .btn:hover{background:#ff3a3a}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.2);color:#fff}
+  .err{color:var(--red);font-size:13px;margin-top:12px;min-height:16px}
+
+  /* ---------- App ---------- */
+  #appScreen{display:none;min-height:100vh;padding-bottom:100px}
+  .topbar{position:sticky;top:0;z-index:20;background:rgba(10,10,10,.95);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.1);padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+  .topbar .t{font-size:22px}
+  .topbar .loja{color:var(--blue);font-size:22px}
+  .logout{background:transparent;border:1px solid rgba(255,255,255,.18);color:var(--mute);padding:8px 14px;font-size:12px;text-transform:uppercase;letter-spacing:.1em}
+  .logout:hover{color:#fff;border-color:var(--red)}
+
+  .list{max-width:720px;margin:0 auto;padding:20px}
+  .cat-title{font-size:14px;color:var(--mute);text-transform:uppercase;letter-spacing:.18em;margin:26px 0 12px}
+  .cat-title:first-child{margin-top:0}
+  .prod-row{display:flex;align-items:center;gap:14px;background:#111;border:1px solid rgba(255,255,255,.08);padding:10px;margin-bottom:8px}
+  .prod-row.off{opacity:.45}
+  .prod-row .th{width:52px;height:52px;flex-shrink:0;background:#000;overflow:hidden}
+  .prod-row .th img{width:100%;height:100%;object-fit:cover}
+  .prod-row .nm{flex:1;min-width:0}
+  .prod-row .nm b{display:block;font-size:14px;font-weight:600;color:#e9e6df}
+  .prod-row .nm span{font-family:"Bebas Neue",sans-serif;font-size:17px;color:var(--blue)}
+  .prod-row .actions{display:flex;gap:6px}
+  .icon-btn{width:34px;height:34px;background:transparent;border:1px solid rgba(255,255,255,.16);color:var(--mute);font-size:15px;display:grid;place-items:center}
+  .icon-btn:hover{color:#fff;border-color:rgba(255,255,255,.4)}
+  .icon-btn.danger:hover{color:var(--red);border-color:var(--red)}
+  .empty{color:var(--mute);text-align:center;padding:60px 20px;font-size:15px}
+
+  .fab{position:fixed;right:20px;bottom:24px;z-index:30;width:60px;height:60px;border-radius:50%;background:var(--red);color:#fff;border:0;font-size:30px;line-height:1;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+  .fab:hover{background:#ff3a3a}
+
+  /* ---------- Bottom sheet (novo produto) ---------- */
+  .sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:90;opacity:0;pointer-events:none;transition:opacity .25s ease}
+  .sheet-overlay.show{opacity:1;pointer-events:auto}
+  .sheet{position:fixed;left:50%;bottom:0;width:min(480px,100%);max-height:90vh;overflow-y:auto;z-index:91;background:#0d0d0d;border:1px solid rgba(255,255,255,.12);border-bottom:0;border-radius:18px 18px 0 0;transform:translate(-50%,100%);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+  .sheet.show{transform:translate(-50%,0)}
+  .sheet-handle{width:40px;height:4px;background:rgba(255,255,255,.25);border-radius:2px;margin:12px auto 0}
+  .sheet-body{padding:18px 22px 30px}
+  .sheet-body h2{font-size:26px;margin-bottom:18px}
+  .photo-pick{width:100%;aspect-ratio:1/1;max-height:220px;background:#111;border:1.5px dashed rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--mute);font-size:13px;text-transform:uppercase;letter-spacing:.08em;overflow:hidden;margin-bottom:16px;cursor:pointer}
+  .photo-pick img{width:100%;height:100%;object-fit:cover}
+  .photo-pick svg{width:30px;height:30px;fill:var(--mute)}
+  select.field-input{width:100%;background:#111;border:1px solid rgba(255,255,255,.16);color:#fff;padding:13px 14px;font-size:15px;outline:none;appearance:none}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .saving{opacity:.6;pointer-events:none}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="loginScreen">
+  <div class="login-card">
+    <h1>Painel de produtos</h1>
+    <p>Entra com o login que foi criado pra você.</p>
+    <div class="field">
+      <label>E-mail</label>
+      <input type="email" id="loginEmail" autocomplete="username" />
+    </div>
+    <div class="field">
+      <label>Senha</label>
+      <input type="password" id="loginPassword" autocomplete="current-password" />
+    </div>
+    <button class="btn" id="loginBtn" type="button">Entrar</button>
+    <div class="err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="appScreen">
+  <div class="topbar">
+    <span class="t">Produtos — <span class="loja" id="lojaNome"></span></span>
+    <button class="logout" id="logoutBtn" type="button">Sair</button>
+  </div>
+
+  <div class="list" id="listRoot">
+    <div class="empty">Carregando...</div>
+  </div>
+
+  <button class="fab" id="fabAdd" type="button" aria-label="Novo produto">+</button>
+</div>
+
+<!-- ============ SHEET: NOVO PRODUTO ============ -->
+<div class="sheet-overlay" id="sheetOverlay"></div>
+<div class="sheet" id="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-body">
+    <h2>Novo produto</h2>
+
+    <label class="photo-pick" id="photoPick">
+      <svg viewBox="0 0 24 24"><path d="M9.4 10.5l4.77 6.9L17.1 13l4.9 7H2l7.4-9.5zM5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2zm12.5 6a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z"/></svg>
+      <span id="photoPickTxt">Toque pra escolher a foto</span>
+      <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none" />
+    </label>
+
+    <div class="field">
+      <label>Categoria</label>
+      <select class="field-input" id="fCategoria"></select>
+    </div>
+    <div class="field">
+      <label>Nova categoria (deixe em branco se já escolheu acima)</label>
+      <input class="field-input" id="fCategoriaNova" placeholder="Ex: Química" />
+    </div>
+    <div class="field">
+      <label>Nome do produto</label>
+      <input class="field-input" id="fProduto" />
+    </div>
+    <div class="field">
+      <label>Preço (R$)</label>
+      <input class="field-input" id="fPreco" type="number" step="0.01" min="0" inputmode="decimal" />
+    </div>
+
+    <button class="btn" id="saveBtn" type="button">Salvar produto</button>
+    <button class="btn ghost" id="cancelBtn" type="button" style="margin-top:8px">Cancelar</button>
+    <div class="err" id="saveErr"></div>
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = "https://rrpsdkofisvgmvcqoeun.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_9HoTh1s-K1xtB4D2iAsI6Q_2sqbo0F9";
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  const fmt = v => Number(v).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+  const slugify = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+
+  let LOJA = null;
+  let selectedFile = null;
+
+  const loginScreen = document.getElementById('loginScreen');
+  const appScreen = document.getElementById('appScreen');
+  const loginErr = document.getElementById('loginErr');
+
+  const MOCK_PRODUCTS = [
+    {id:'m1', categoria:'Lâminas & cartelas', produto:'Cartelas de Derby', preco:27, imagem_url:'', disponivel:true},
+    {id:'m2', categoria:'Lâminas & cartelas', produto:'Cartelas de Lord Super', preco:20, imagem_url:'', disponivel:true},
+    {id:'m3', categoria:'Ceras & finalização', produto:'Cera Modeladora Matte 77 For Man', preco:8, imagem_url:'', disponivel:false},
+    {id:'m4', categoria:'Ferramentas & equipamentos', produto:'Máquina Kemel', preco:60, imagem_url:'', disponivel:true}
+  ];
+
+  async function boot(){
+    if(new URLSearchParams(location.search).get('preview') === '1'){
+      LOJA = 'thepeixe (preview)';
+      document.getElementById('lojaNome').textContent = LOJA;
+      loginScreen.style.display = 'none';
+      appScreen.style.display = 'block';
+      renderList(MOCK_PRODUCTS);
+      return;
+    }
+    const { data: { session } } = await sb.auth.getSession();
+    if(session) await afterLogin();
+  }
+
+  document.getElementById('loginBtn').addEventListener('click', async () => {
+    loginErr.textContent = '';
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if(error){ loginErr.textContent = 'E-mail ou senha errados.'; return; }
+    await afterLogin();
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await sb.auth.signOut();
+    location.reload();
+  });
+
+  async function afterLogin(){
+    const { data: { user } } = await sb.auth.getUser();
+    const { data: vinculo, error } = await sb.from('lojistas').select('loja').eq('user_id', user.id).single();
+    if(error || !vinculo){
+      loginErr.textContent = 'Esse login não tá vinculado a nenhuma loja ainda.';
+      await sb.auth.signOut();
+      return;
+    }
+    LOJA = vinculo.loja;
+    document.getElementById('lojaNome').textContent = LOJA;
+    loginScreen.style.display = 'none';
+    appScreen.style.display = 'block';
+    await loadList();
+  }
+
+  async function loadList(){
+    const { data, error } = await sb.from('produtos').select('*').eq('loja', LOJA).order('categoria').order('produto');
+    renderList(error ? [] : data);
+  }
+
+  function renderList(data){
+    const root = document.getElementById('listRoot');
+    if(!data || !data.length){
+      root.innerHTML = '<div class="empty">Nenhum produto ainda. Toca no + pra cadastrar o primeiro.</div>';
+      return;
+    }
+    populateCategorias([...new Set(data.map(p => p.categoria))]);
+    const groups = new Map();
+    data.forEach(p => {
+      if(!groups.has(p.categoria)) groups.set(p.categoria, []);
+      groups.get(p.categoria).push(p);
+    });
+    let html = '';
+    groups.forEach((items, categoria) => {
+      html += `<div class="cat-title">${categoria}</div>`;
+      items.forEach(p => {
+        html += `<div class="prod-row ${p.disponivel ? '' : 'off'}" data-id="${p.id}">
+          <div class="th">${p.imagem_url ? `<img src="${p.imagem_url}" alt="">` : ''}</div>
+          <div class="nm"><b>${p.produto}</b><span>${fmt(p.preco)}</span></div>
+          <div class="actions">
+            <button class="icon-btn" data-action="toggle" title="${p.disponivel ? 'Marcar indisponível' : 'Marcar disponível'}">${p.disponivel ? '👁' : '🚫'}</button>
+            <button class="icon-btn danger" data-action="delete" title="Apagar">✕</button>
+          </div>
+        </div>`;
+      });
+    });
+    root.innerHTML = html;
+
+    root.querySelectorAll('.prod-row').forEach(row => {
+      const id = row.dataset.id;
+      row.querySelector('[data-action="toggle"]').addEventListener('click', () => toggleDisponivel(row, id));
+      row.querySelector('[data-action="delete"]').addEventListener('click', () => deleteProduto(id));
+    });
+  }
+
+  async function toggleDisponivel(row, id){
+    const current = !row.classList.contains('off');
+    await sb.from('produtos').update({ disponivel: !current }).eq('id', id);
+    await loadList();
+  }
+
+  async function deleteProduto(id){
+    if(!confirm('Apagar esse produto?')) return;
+    await sb.from('produtos').delete().eq('id', id);
+    await loadList();
+  }
+
+  function populateCategorias(cats){
+    const sel = document.getElementById('fCategoria');
+    sel.innerHTML = '<option value="">— escolher —</option>' + cats.map(c => `<option value="${c}">${c}</option>`).join('');
+  }
+
+  // ---------- Sheet novo produto ----------
+  const sheetOverlay = document.getElementById('sheetOverlay');
+  const sheet = document.getElementById('sheet');
+  const photoInput = document.getElementById('photoInput');
+  const photoPick = document.getElementById('photoPick');
+  const photoPickTxt = document.getElementById('photoPickTxt');
+  const saveErr = document.getElementById('saveErr');
+
+  function openSheet(){
+    document.getElementById('fCategoriaNova').value = '';
+    document.getElementById('fProduto').value = '';
+    document.getElementById('fPreco').value = '';
+    photoInput.value = '';
+    selectedFile = null;
+    photoPickTxt.textContent = 'Toque pra escolher a foto';
+    photoPick.querySelector('img')?.remove();
+    saveErr.textContent = '';
+    sheetOverlay.classList.add('show');
+    sheet.classList.add('show');
+  }
+  function closeSheet(){
+    sheetOverlay.classList.remove('show');
+    sheet.classList.remove('show');
+  }
+  document.getElementById('fabAdd').addEventListener('click', openSheet);
+  document.getElementById('cancelBtn').addEventListener('click', closeSheet);
+  sheetOverlay.addEventListener('click', closeSheet);
+
+  photoPick.addEventListener('click', () => photoInput.click());
+  photoInput.addEventListener('change', () => {
+    const file = photoInput.files[0];
+    if(!file) return;
+    selectedFile = file;
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(file);
+    photoPickTxt.textContent = '';
+    photoPick.querySelector('img')?.remove();
+    photoPick.appendChild(img);
+  });
+
+  document.getElementById('saveBtn').addEventListener('click', async () => {
+    saveErr.textContent = '';
+    const categoriaNova = document.getElementById('fCategoriaNova').value.trim();
+    const categoriaSel = document.getElementById('fCategoria').value;
+    const categoria = categoriaNova || categoriaSel;
+    const produto = document.getElementById('fProduto').value.trim();
+    const preco = parseFloat(document.getElementById('fPreco').value);
+
+    if(!categoria){ saveErr.textContent = 'Escolhe ou digita uma categoria.'; return; }
+    if(!produto){ saveErr.textContent = 'Falta o nome do produto.'; return; }
+    if(isNaN(preco) || preco < 0){ saveErr.textContent = 'Preço inválido.'; return; }
+
+    sheet.classList.add('saving');
+    try{
+      let imagem_url = '';
+      if(selectedFile){
+        const ext = selectedFile.name.split('.').pop() || 'jpg';
+        const path = `${LOJA}/${Date.now()}-${slugify(produto)}.${ext}`;
+        const { error: upErr } = await sb.storage.from('produtos').upload(path, selectedFile);
+        if(upErr) throw upErr;
+        imagem_url = sb.storage.from('produtos').getPublicUrl(path).data.publicUrl;
+      }
+      const { error } = await sb.from('produtos').insert({ loja: LOJA, categoria, produto, preco, imagem_url, disponivel: true });
+      if(error) throw error;
+      closeSheet();
+      await loadList();
+    } catch(err){
+      saveErr.textContent = 'Deu erro ao salvar: ' + err.message;
+    } finally {
+      sheet.classList.remove('saving');
+    }
+  });
+
+  boot();
+</script>
+</body>
+</html>
