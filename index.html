@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Icarawaii Club — Projetos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0a0a;--ink:#f2efe8;--mute:#7a7a7a;--red:#e63030;--blue:#4a9fd4}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);font-family:"Barlow Condensed",sans-serif;min-height:100vh}
+  body{display:flex;align-items:center;justify-content:center;padding:24px}
+  .wrap{max-width:560px;width:100%}
+  h1{font-family:"Bebas Neue",sans-serif;font-size:clamp(40px,8vw,72px);letter-spacing:.01em;line-height:.92;text-transform:uppercase;margin-bottom:10px}
+  h1 .red{color:var(--red);font-style:italic}
+  p.sub{color:var(--mute);font-size:16px;margin-bottom:36px}
+  .card{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    border:1px solid rgba(255,255,255,.14);padding:20px 22px;margin-bottom:14px;
+    text-decoration:none;color:inherit;transition:border-color .2s ease,transform .2s ease;
+  }
+  .card:hover{border-color:var(--blue);transform:translateX(4px)}
+  .card .t{font-family:"Bebas Neue",sans-serif;font-size:24px;letter-spacing:.03em;text-transform:uppercase}
+  .card .d{color:var(--mute);font-size:14px;margin-top:4px}
+  .card .arrow{font-family:"Bebas Neue",sans-serif;font-size:22px;color:var(--red)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Icarawaii <span class="red">Club</span></h1>
+    <p class="sub">Projetos em andamento — links diretos pra cada frente.</p>
+
+    <a class="card" href="./ICARAWAII%20CLUB/Landing%20Page.html">
+      <div>
+        <div class="t">Landing page do clube</div>
+        <div class="d">Barbearia, tatuagem, streetwear e lounge — visão geral</div>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+
+    <a class="card" href="./THEPEIXE%20PRODUTOS%20DEMO/index.html">
+      <div>
+        <div class="t">ThePeixe Produtos</div>
+        <div class="d">Catálogo B2B de insumo de barbearia, pedido no WhatsApp</div>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+</body>
+</html>
